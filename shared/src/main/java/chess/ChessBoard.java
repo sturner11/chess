@@ -17,6 +17,7 @@ public class ChessBoard {
             }
             board[i] = row;
         }
+        resetBoard();
     }
 
     /**
@@ -81,16 +82,6 @@ public class ChessBoard {
                     break;
             }
         }
-
-
-
-        for (ChessPosition position: board[1]) { // Add White Pawns
-            position.piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
-        }
-        for (ChessPosition position: board[6]) { // Add Black Pawns
-            position.piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
-        }
-//        for ()
     }
 
     private void setBackRow(ChessPosition row[], ChessGame.TeamColor color) {
