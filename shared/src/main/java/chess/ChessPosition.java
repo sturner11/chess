@@ -31,4 +31,9 @@ public class ChessPosition {
     public int getColumn() {
         return this.col;
     }
+
+    public ChessPiece setPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+        this.piece = new ChessPiece(pieceColor, type);
+        return this.piece;
+    }
 }
