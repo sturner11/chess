@@ -52,6 +52,86 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
+        for (ChessPosition[] row: this.board){
+            switch(row[0].getRow()){
+                case 0:
+                    setBackRow(row, ChessGame.TeamColor.WHITE);
+                    break;
+                case 1:
+                    for (ChessPosition position: row) { // Add White Pawns
+                        position.piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
+                        break;
+                    }
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                    for (ChessPosition position: row){
+                        position.hasPiece = false;
+                        position.piece = null;
+                    }
+                    break;
+                case 6:
+                    for (ChessPosition position: row) { // Add White Pawns
+                        position.piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
+                        break;
+                    }
+                case 7:
+                    setBackRow(row, ChessGame.TeamColor.BLACK);
+                    break;
+            }
+        }
+
+
+
+        for (ChessPosition position: board[1]) { // Add White Pawns
+            position.piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
+        }
+        for (ChessPosition position: board[6]) { // Add Black Pawns
+            position.piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
+        }
+//        for ()
+    }
+
+    private void setBackRow(ChessPosition row[], ChessGame.TeamColor color) {
+        for (ChessPosition position: row){
+            switch (position.getColumn()) {
+                case 0:
+                    position.hasPiece = true;
+                    position.piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+
+                    break;
+                case 1:
+                    position.hasPiece = true;
+                    position.piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
+                    break;
+                case 2:
+                    position.hasPiece = true;
+                    position.piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
+                    break;
+                case 3:
+                    position.hasPiece = true;
+                    position.piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
+                    break;
+                case 4:
+                    position.hasPiece = true;
+                    position.piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
+                    break;
+                case 5:
+                    position.hasPiece = true;
+                    position.piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
+                    break;
+                case 6:
+                    position.hasPiece = true;
+                    position.piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
+                    break;
+                case 7:
+                    position.hasPiece = true;
+                    position.piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+                    break;
+            }
+        }
+
     }
 
 }
