@@ -1,5 +1,8 @@
 package chess;
 
+import chess.Pieces.BishopMoveCalculator;
+import chess.Pieces.PieceMoveCalculator;
+
 import java.util.Collection;
 
 /**
@@ -9,7 +12,7 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessPiece {
-    private ChessGame.TeamColor color;
+    private final ChessGame.TeamColor color;
     private ChessPiece.PieceType type;
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         color = pieceColor;
@@ -50,6 +53,18 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        myPosition.piece = board.getPiece(myPosition);
+       if (myPosition.piece == null){
+           return null;
+       }
+
+        switch(myPosition.piece.type){
+            case ChessPiece.PieceType.BISHOP:
+                BishopMoveCalculator calc = new BishopMoveCalculator();
+                return calc.pieceMoves(board, myPosition);
+        }
+        // TODO Remove after adding statments;
+        return null;
+
     }
 }

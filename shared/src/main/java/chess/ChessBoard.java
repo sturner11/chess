@@ -17,7 +17,12 @@ public class ChessBoard {
             }
             board[i] = row;
         }
-        resetBoard();
+//        resetBoard();
+        //TODO Should we always start with a fresh board?
+    }
+
+    public ChessPosition[][] getBoard(){
+        return board;
     }
 
     /**
@@ -32,6 +37,7 @@ public class ChessBoard {
         }
         position.hasPiece = true;
         position.piece = piece;
+        board[position.getRow()][position.getColumn()] = position;
     }
 
     /**
@@ -42,10 +48,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        if (position.hasPiece) {
-            return position.piece;
-        }
-        return null;
+        return board[position.getRow()][position.getColumn()].piece;
     }
 
     /**
@@ -84,7 +87,7 @@ public class ChessBoard {
         }
     }
 
-    private void setBackRow(ChessPosition row[], ChessGame.TeamColor color) {
+    private void setBackRow(ChessPosition[] row, ChessGame.TeamColor color) {
         for (ChessPosition position: row){
             switch (position.getColumn()) {
                 case 0:

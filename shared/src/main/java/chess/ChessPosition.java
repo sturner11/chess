@@ -36,4 +36,18 @@ public class ChessPosition {
         this.piece = new ChessPiece(pieceColor, type);
         return this.piece;
     }
+    @Override
+    public boolean equals(Object o){
+        if (o == null){
+            return false;
+        }
+        if (this == o){
+            return true;
+        }
+        if (this.getClass() != o.getClass()){
+            return false;
+        }
+        ChessPosition other = (ChessPosition)o;
+        return this.hasPiece == other.hasPiece && this.col == other.col && this.row == other.row;
+    }
 }
