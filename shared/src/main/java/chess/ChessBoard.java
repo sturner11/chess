@@ -12,7 +12,7 @@ public class ChessBoard {
         for (int i = 0; i < 8; i++) {
             ChessPosition[] row = new ChessPosition[8];
             for (int j = 0; j < 8; j++) {
-                ChessPosition temp = new ChessPosition(i, j);
+                ChessPosition temp = new ChessPosition(i+1, j+1);
                 row[j] = temp;
             }
             board[i] = row;
@@ -37,7 +37,7 @@ public class ChessBoard {
         }
         position.hasPiece = true;
         position.piece = piece;
-        board[position.getRow()][position.getColumn()] = position;
+        board[position.getRow()-1][position.getColumn()-1] = position;
     }
 
     /**
@@ -48,7 +48,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return board[position.getRow()][position.getColumn()].piece;
+        return board[position.getRow()-1][position.getColumn()-1].piece;
     }
 
     /**
