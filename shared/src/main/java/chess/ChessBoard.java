@@ -32,11 +32,11 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        if (position.hasPiece) {
-            throw new Error("Piece not added, position already filled");
-        }
-        position.hasPiece = true;
-        position.piece = piece;
+//        if (position.hasPiece) {
+//            throw new Error("Piece not added, position already filled");
+//        }
+//        position.hasPiece = true;
+//        position.piece = piece;
         board[position.getRow()-1][position.getColumn()-1] = position;
     }
 

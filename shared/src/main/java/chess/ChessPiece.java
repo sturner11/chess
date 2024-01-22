@@ -4,6 +4,7 @@ import chess.Pieces.BishopMoveCalculator;
 import chess.Pieces.PieceMoveCalculator;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -53,12 +54,16 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        myPosition.piece = board.getPiece(myPosition);
-       if (myPosition.piece == null){
-           return null;
-       }
+//        myPosition.piece = board.getPiece(myPosition);
+//       if (myPosition.piece == null){
+//           return null;
+//       }
+        ChessPiece piece = board.getPiece(myPosition);
+        if (piece == null){
+            return null;
+        }
 
-        switch(myPosition.piece.type){
+        switch(piece.type){
             case ChessPiece.PieceType.BISHOP:
                 BishopMoveCalculator calc = new BishopMoveCalculator();
                 return calc.pieceMoves(board, myPosition);
@@ -66,5 +71,25 @@ public class ChessPiece {
         // TODO Remove after adding statments;
         return null;
 
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(color, type);
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if (o == null){
+            return false;
+        }
+        if (this == o){
+            return true;
+        }
+        if (this.getClass() != o.getClass()){
+            return false;
+        }
+        ChessPiece other = (ChessPiece)o;
+        return this.color.equals(other.color) && this.type.equals(other.type);
     }
 }

@@ -1,5 +1,7 @@
 package chess;
 
+import java.util.Objects;
+
 /**
  * Represents a single square position on a chess board
  * <p>
@@ -7,8 +9,8 @@ package chess;
  * signature of the existing methods.
  */
 public class ChessPosition {
-    public boolean hasPiece = false;
-    public ChessPiece piece;
+//    public boolean hasPiece = false;
+//    public ChessPiece piece;
     private int row;
     private int col;
     public ChessPosition(int row, int col) {
@@ -33,9 +35,27 @@ public class ChessPosition {
     }
 
     public ChessPiece setPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
-        this.piece = new ChessPiece(pieceColor, type);
-        return this.piece;
+//        this.piece = new ChessPiece(pieceColor, type);
+//        return this.piece;
+        return null;
     }
+
+    @Override
+    public int hashCode() {
+//        return Objects.hash(hasPiece, piece, row, col);
+        return Objects.hash(row, col);
+    }
+
+    @Override
+    public String toString() {
+        return "ChessPosition{" +
+//                "hasPiece=" + hasPiece + "\n" +
+//                ", piece=" + piece + "\n" +
+                ", row=" + row + "\n" +
+                ", col=" + col + "\n" +
+                '}' + "\n";
+    }
+
     @Override
     public boolean equals(Object o){
         if (o == null){
@@ -48,6 +68,9 @@ public class ChessPosition {
             return false;
         }
         ChessPosition other = (ChessPosition)o;
-        return this.hasPiece == other.hasPiece && this.col == other.col && this.row == other.row;
+//        return this.hasPiece == other.hasPiece && this.col == other.col && this.row == other.row && this.piece.equals(other.piece);
+        return this.col == other.col && this.row == other.row;
+
+
     }
 }
