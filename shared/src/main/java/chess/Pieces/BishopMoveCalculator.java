@@ -34,7 +34,7 @@ public class BishopMoveCalculator implements PieceMoveCalculator {
         }
         row = ori_row;
         col = ori_col;
-        // NW
+        // NW TODO Check this? All row > 1
         while (row > 1 && col < 8) {
             row --;
             col ++;
