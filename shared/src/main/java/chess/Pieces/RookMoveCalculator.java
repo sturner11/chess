@@ -28,7 +28,7 @@ public class RookMoveCalculator implements PieceMoveCalculator{
                 move = new ChessMove(position, new ChessPosition(row, col), null);
                 moves.add(move);
                 break;
-            }
+            } else if (board.getBoard()[row-1][col-1] != piece){ break;}
             row ++;
         }
         row = ori_row;
@@ -40,7 +40,7 @@ public class RookMoveCalculator implements PieceMoveCalculator{
                 move = new ChessMove(position, new ChessPosition(row, col), null);
                 moves.add(move);
                 break;
-            }
+            } else if (board.getBoard()[row-1][col-1] != piece){ break;}
             row --;
         }
         // Sides
@@ -53,7 +53,7 @@ public class RookMoveCalculator implements PieceMoveCalculator{
                 move = new ChessMove(position, new ChessPosition(row, col), null);
                 moves.add(move);
                 break;
-            }
+            } else if (board.getBoard()[row-1][col-1] != piece){ break;}
             col ++;
         }
 
@@ -66,7 +66,7 @@ public class RookMoveCalculator implements PieceMoveCalculator{
                 move = new ChessMove(position, new ChessPosition(row, col), null);
                 moves.add(move);
                 break;
-            }
+            } else if (board.getBoard()[row-1][col-1] != piece){ break;}
             col --;
         }
         return moves;
