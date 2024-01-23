@@ -33,7 +33,7 @@ public class PawnMoveCalculator implements PieceMoveCalculator{
             frontClear = true;
         }
         col ++;
-        otherPiece = board.getBoard()[row][col];
+        otherPiece = board.getBoard()[row-1][col-1];
         if ((otherPiece != null && otherPiece.getTeamColor() == currentPiece.getTeamColor())){
             move = new ChessMove(position, new ChessPosition(row, col), null);
             moves.add(move);
@@ -41,7 +41,7 @@ public class PawnMoveCalculator implements PieceMoveCalculator{
         // Double movement
         col--;
         row = (currentPiece.getTeamColor()  == ChessGame.TeamColor.WHITE ? row + 1 : row - 1); //Black moves down
-        otherPiece = board.getBoard()[row][col];
+        otherPiece = board.getBoard()[row-1][col-1];
 
         if (otherPiece == null && frontClear && firstMove){
             move = new ChessMove(position, new ChessPosition(row, col), null);
