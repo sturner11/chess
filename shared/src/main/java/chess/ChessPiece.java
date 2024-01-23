@@ -3,6 +3,7 @@ package chess;
 import chess.Pieces.BishopMoveCalculator;
 import chess.Pieces.KingMoveCalculator;
 import chess.Pieces.KnightMoveCalculator;
+import chess.Pieces.PawnMoveCalculator;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -70,6 +71,9 @@ public class ChessPiece {
             case ChessPiece.PieceType.KNIGHT:
                 KnightMoveCalculator calcKnight = new KnightMoveCalculator();
                 return calcKnight.pieceMoves(board, myPosition);
+            case PieceType.PAWN:
+                PawnMoveCalculator calcPawn = new PawnMoveCalculator();
+                return calcPawn.pieceMoves(board, myPosition);
 
         }
         // TODO Remove after adding statments;
