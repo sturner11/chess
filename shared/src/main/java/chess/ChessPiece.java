@@ -74,6 +74,9 @@ public class ChessPiece {
             case PieceType.ROOK:
                 RookMoveCalculator calcRook = new RookMoveCalculator();
                 return calcRook.pieceMoves(board, myPosition);
+            case PieceType.QUEEN:
+                QueenMoveCalculator calcQueen = new QueenMoveCalculator();
+                return calcQueen.pieceMoves(board,myPosition);
 
         }
         // TODO Remove after adding statments;
