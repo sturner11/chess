@@ -1,7 +1,8 @@
 package chess;
 
 import chess.Pieces.BishopMoveCalculator;
-import chess.Pieces.PieceMoveCalculator;
+import chess.Pieces.KingMoveCalculator;
+import chess.Pieces.KnightMoveCalculator;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -54,10 +55,6 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-//        myPosition.piece = board.getPiece(myPosition);
-//       if (myPosition.piece == null){
-//           return null;
-//       }
         ChessPiece piece = board.getPiece(myPosition);
         if (piece == null){
             return null;
@@ -65,8 +62,15 @@ public class ChessPiece {
 
         switch(piece.type){
             case ChessPiece.PieceType.BISHOP:
-                BishopMoveCalculator calc = new BishopMoveCalculator();
-                return calc.pieceMoves(board, myPosition);
+                BishopMoveCalculator calcBishop = new BishopMoveCalculator();
+                return calcBishop.pieceMoves(board, myPosition);
+            case ChessPiece.PieceType.KING:
+                KingMoveCalculator calcKing = new KingMoveCalculator();
+                return calcKing.pieceMoves(board, myPosition);
+            case ChessPiece.PieceType.KNIGHT:
+                KnightMoveCalculator calcKnight = new KnightMoveCalculator();
+                return calcKnight.pieceMoves(board, myPosition);
+
         }
         // TODO Remove after adding statments;
         return null;

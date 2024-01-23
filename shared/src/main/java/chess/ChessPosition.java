@@ -9,8 +9,6 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessPosition {
-//    public boolean hasPiece = false;
-//    public ChessPiece piece;
     private int row;
     private int col;
     public ChessPosition(int row, int col) {
@@ -34,11 +32,6 @@ public class ChessPosition {
         return this.col;
     }
 
-    public ChessPiece setPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
-//        this.piece = new ChessPiece(pieceColor, type);
-//        return this.piece;
-        return null;
-    }
 
     @Override
     public int hashCode() {
@@ -48,9 +41,7 @@ public class ChessPosition {
 
     @Override
     public String toString() {
-        return "ChessPosition{" +
-//                "hasPiece=" + hasPiece + "\n" +
-//                ", piece=" + piece + "\n" +
+        return "ChessPosition{" + "\n" +
                 ", row=" + row + "\n" +
                 ", col=" + col + "\n" +
                 '}' + "\n";
@@ -68,7 +59,6 @@ public class ChessPosition {
             return false;
         }
         ChessPosition other = (ChessPosition)o;
-//        return this.hasPiece == other.hasPiece && this.col == other.col && this.row == other.row && this.piece.equals(other.piece);
         return this.col == other.col && this.row == other.row;
 
 

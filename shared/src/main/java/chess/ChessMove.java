@@ -54,13 +54,13 @@ public class ChessMove {
             return false;
         }
         ChessMove other = (ChessMove) o;
-
-        return endPosition.equals(other.endPosition) && startPosition.equals(other.startPosition) && promotionPiece.equals(other.promotionPiece);
+//TODO Add promotion piece
+        return endPosition.equals(other.endPosition) && startPosition.equals(other.startPosition);
     }
 
     @Override
     public String toString() {
-        return "ChessMove{" +
+        return "ChessMove{" + "\n" +
                 "startPosition=" + startPosition + "\n" +
                 ", endPosition=" + endPosition + "\n" +
                 ", promotionPiece=" + promotionPiece + "\n" +
