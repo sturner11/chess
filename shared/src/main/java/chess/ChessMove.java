@@ -57,7 +57,10 @@ public class ChessMove {
         }
         ChessMove other = (ChessMove) o;
 //TODO Add promotion piece
-        return endPosition.equals(other.endPosition) && startPosition.equals(other.startPosition);
+        if (this.promotionPiece != null && other.promotionPiece != null) {
+            return endPosition.equals(other.endPosition) && startPosition.equals(other.startPosition) && promotionPiece.equals(other.promotionPiece);
+        } else if (this.promotionPiece == null && other.promotionPiece == null){ return endPosition.equals(other.endPosition) && startPosition.equals(other.startPosition);
+        } else { return false ;}
     }
 
     @Override
