@@ -15,12 +15,12 @@ public class PawnMoveCalculator implements PieceMoveCalculator{
         ChessPiece currentPiece = board.getBoard()[ori_row-1][ori_col-1];
         int row = (currentPiece.getTeamColor()  == ChessGame.TeamColor.WHITE ? ori_row + 1 : ori_row - 1); // Black is going down
         int col = ori_col - 1;
-        ChessPiece otherPiece = board.getBoard()[row][col];
+        ChessPiece otherPiece = board.getBoard()[row-1][col-1];
         ChessMove move = null;
         boolean frontClear = false;
         boolean firstMove = ((currentPiece.getTeamColor() == ChessGame.TeamColor.WHITE && row == 2) || (currentPiece.getTeamColor() == ChessGame.TeamColor.BLACK && row == 7));
         // Forward Diag
-        if ((otherPiece != null && otherPiece.getTeamColor() == currentPiece.getTeamColor())){
+        if ((otherPiece != null && otherPiece.getTeamColor() != currentPiece.getTeamColor())){
             move = new ChessMove(position, new ChessPosition(row, col), null);
             moves.add(move);
         }
