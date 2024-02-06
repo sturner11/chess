@@ -11,40 +11,37 @@ import java.util.HashSet;
 public class KingMoveCalculator implements PieceMoveCalculator{
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
-        HashSet<ChessMove> moves = new HashSet<ChessMove>() ;
-        int ori_row = position.getRow();
-        int ori_col = position.getColumn();
-        int row = ori_row - 1;
-        int col = ori_col - 1;
-        int rowCount = 0;
-        int colCount = 0;
-        ChessMove move = null;
-        ChessPiece currentPiece = board.getBoard()[ori_row-1][ori_col-1];
-
-        //TODO: Change Row Count and otherPiece grabbing
-        // NE
-        while (row < 9 && rowCount < 3){
-            col = ori_col - 1;
-            colCount = 0;
-            if (row < 0){
-                continue;
-            }
-            while (col < 9 && colCount < 3) {
-                if (col < 0){ continue;}
-                ChessPiece otherPiece = board.getBoard()[row-1][col-1];
-                if ((otherPiece != null && otherPiece.getTeamColor() == currentPiece.getTeamColor())){
-                    col++;
-                    colCount++;
-                    continue;
-                }
-                move = new ChessMove(position, new ChessPosition(row, col), null);
+        HashSet<ChessMove> moves = new HashSet<>();
+        int oRow = position.getRow();
+        int oCol = position.getColumn();
+        ChessPiece[][] myBoard = board.getBoard();
+        ChessPiece piece = myBoard[oRow - 1][oCol - 1];
+        int row = oRow-1;
+        int col = oCol;
+        for (int i = oCol - 1; i < oCol + 2; i++){
+            ChessPosition next = new ChessPosition(i, oCol);
+            if (i > 1 && i < 9 && row > 1 && (myBoard[row-1][i-1] == null || myBoard[row-1][i-1].getTeamColor() != piece.getTeamColor())) {
+                ChessMove move = new ChessMove(position, new ChessPosition(row, i), null);
                 moves.add(move);
-                col++;
-                colCount++;
             }
-            row++;
-            rowCount++;
         }
+        row = oRow +1 ;
+        for (int i = oCol - 1; i < oCol + 2; i++){
+            ChessPosition next = new ChessPosition(i, oCol);
+            if (i > 1 && i < 9 && row < 9 && (myBoard[row-1][i-1] == null || myBoard[row-1][i-1].getTeamColor() != piece.getTeamColor())) {
+                ChessMove move = new ChessMove(position, new ChessPosition(row, i), null);
+                moves.add(move);
+            }
+        }
+        row = oRow;
+        for (int i = oCol - 1; i < oCol + 2; i++){
+            ChessPosition next = new ChessPosition(i, oCol);
+            if (i > 0 && i < 9 && row < 9 && (myBoard[row-1][i-1] == null || myBoard[row-1][i-1].getTeamColor() != piece.getTeamColor())) {
+                ChessMove move = new ChessMove(position, new ChessPosition(row, i), null);
+                moves.add(move);
+            }
+        }
+
         return moves;
     }
 }
