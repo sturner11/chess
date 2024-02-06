@@ -9,7 +9,7 @@ import java.util.Arrays;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    private final ChessPiece[][] board = new ChessPiece[8][8];
+    private ChessPiece[][] board = new ChessPiece[8][8];
     private ChessPosition blackKingPos;
     private ChessPosition whiteKingPos;
 
@@ -21,6 +21,12 @@ public class ChessBoard {
             }
             board[i] = row;
         }
+    }
+
+    public ChessBoard(ChessBoard another) {
+        this.whiteKingPos = another.whiteKingPos;
+        this.blackKingPos = another.blackKingPos;
+        this.board = another.board;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
 
 /**
@@ -47,11 +48,32 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+        Collection<ChessMove> validMoves = new HashSet<ChessMove>();
         if (this.board.getBoard()[startPosition.getRow()-1][startPosition.getColumn()-1] != null) {
-            ChessPiece piece = this.board.getBoard()[startPosition.getRow()][startPosition.getColumn()];
-            return piece.pieceMoves(board, startPosition);
+            ChessPiece piece = this.board.getBoard()[startPosition.getRow() - 1][startPosition.getColumn() - 1];
+            Collection<ChessMove> moves = piece.pieceMoves(board, startPosition);
+            for (ChessMove move : moves) {
+                ChessBoard test = new ChessBoard(this.board);
+                test.setPiece(move);
+                boolean addToMoves = true;
+                for (int i = 1; i < 9; i++){
+                    for (int j = 1; j < 9; j++){
+                        ChessPiece testPiece = test.getBoard()[i-1][j-1];
+                        if (piece.getTeamColor() != this.teamTurn){
+                            ChessMove kingMove = new ChessMove(new ChessPosition(i,j), this.board.getKingPos(this.teamTurn), null);
+                            Collection<ChessMove> testMoves = piece.pieceMoves(board, new ChessPosition(i,j));
+                            if (testMoves.contains(kingMove)){
+                                addToMoves = false;
+                            }
+                        }
+                    }
+                }
+                if (addToMoves){
+                    validMoves.add(move);
+                }
+            }
         }
-        return null;
+        return validMoves;
     }
 
     /**
@@ -64,6 +86,7 @@ public class ChessGame {
         Collection<ChessMove> moves = validMoves(move.getStartPosition());
         if (moves.contains(move)){
             board.setPiece(move);
+            //TODO: CHANGE TEAMS
         }
         else {
             throw new InvalidMoveException();
@@ -102,7 +125,6 @@ public class ChessGame {
             for (int j = 1; j < 9; j++){
                 ChessPiece piece = board.getBoard()[i-1][j-1];
                 if (piece.getTeamColor() != teamColor){
-                    //TODO CHECK PROMOTION PIECE?
                     ChessMove kingMove = new ChessMove(new ChessPosition(i,j), this.board.getKingPos(teamColor), null);
                     Collection<ChessMove> moves = piece.pieceMoves(board, new ChessPosition(i,j));
                     if (moves.contains(kingMove)){
@@ -112,6 +134,7 @@ public class ChessGame {
             }
         }
         return false;
+
     }
 
     /**
@@ -132,7 +155,21 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (isInCheck(teamColor)) {
+            for (int i = 1; i < 9; i++){
+                for (int j = 1; j < 9; j++){
+                    ChessPiece piece = board.getBoard()[i-1][j-1];
+                    if (piece.getTeamColor() == teamColor){
+                        ChessPosition piecePosition = new ChessPosition(i, j);
+                        Collection<ChessMove> moves = validMoves(piecePosition);
+                        if (moves.isEmpty()){
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -141,7 +178,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        throw new RuntimeException("Not implemented");
+        this.board = board;
     }
 
     /**
@@ -150,6 +187,6 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
+        return this.getBoard();
     }
 }
