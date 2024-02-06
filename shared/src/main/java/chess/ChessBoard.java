@@ -9,7 +9,10 @@ import java.util.Arrays;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    private ChessPiece[][] board = new ChessPiece[8][8];
+    private final ChessPiece[][] board = new ChessPiece[8][8];
+    private ChessPosition blackKingPos;
+    private ChessPosition whiteKingPos;
+
     public ChessBoard() {
         for (int i = 0; i < 8; i++) {
             ChessPiece[] row = new ChessPiece[8];
@@ -18,8 +21,6 @@ public class ChessBoard {
             }
             board[i] = row;
         }
-//        resetBoard();
-        //TODO Should we always start with a fresh board?
     }
 
     @Override
@@ -75,7 +76,7 @@ public class ChessBoard {
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(board);
+        return Arrays.deepHashCode(board);
     }
 
     /**
@@ -108,6 +109,32 @@ public class ChessBoard {
         board[0][3] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
         board[7][4] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
         board[7][3] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
+        this.whiteKingPos = new ChessPosition(0,4);
+        this.blackKingPos = new ChessPosition(7,4);
     }
 
+    public void setPiece(ChessMove move) {
+        int startRow = move.getStartPosition().getRow();
+        int startCol = move.getStartPosition().getColumn();
+        int endRow = move.getStartPosition().getRow();
+        int endCol = move.getStartPosition().getColumn();
+
+        this.board[endRow - 1][endCol-1] = this.board[startRow - 1][startCol-1];
+        this.board[startRow - 1][startCol-1] = null;
+        if (this.board[endRow - 1][endCol-1].getPieceType() == ChessPiece.PieceType.KING){
+            switch (this.board[endRow - 1][endCol-1].getTeamColor()){
+                case ChessGame.TeamColor.WHITE:
+                    this.whiteKingPos = new ChessPosition(endRow, endCol);
+                case ChessGame.TeamColor.BLACK:
+                    this.blackKingPos = new ChessPosition(endRow, endCol);
+            }
+        }
+    }
+
+    public ChessPosition getKingPos(ChessGame.TeamColor teamColor) {
+        return switch (teamColor) {
+            case ChessGame.TeamColor.WHITE -> this.whiteKingPos;
+            case ChessGame.TeamColor.BLACK -> this.blackKingPos;
+        };
+    }
 }
