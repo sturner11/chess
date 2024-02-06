@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -46,6 +47,10 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+        if (this.board.getBoard()[startPosition.getRow()-1][startPosition.getColumn()-1] != null) {
+            ChessPiece piece = this.board.getBoard()[startPosition.getRow()][startPosition.getColumn()];
+            return piece.pieceMoves(board, startPosition);
+        }
         return null;
     }
 
@@ -55,7 +60,36 @@ public class ChessGame {
      * @param move chess move to preform
      * @throws InvalidMoveException if move is invalid
      */
-    public void makeMove(ChessMove move) throws InvalidMoveException { throw new RuntimeException("Not implemented");}
+    public void makeMove(ChessMove move) throws InvalidMoveException {
+        Collection<ChessMove> moves = validMoves(move.getStartPosition());
+        if (moves.contains(move)){
+            board.setPiece(move);
+        }
+        else {
+            throw new InvalidMoveException();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "ChessGame{" +
+                "board=" + board +
+                ", teamTurn=" + teamTurn +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessGame chessGame = (ChessGame) o;
+        return Objects.equals(board, chessGame.board) && teamTurn == chessGame.teamTurn;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(board, teamTurn);
+    }
 
     /**
      * Determines if the given team is in check
@@ -64,7 +98,20 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        for (int i = 1; i < 9; i++){
+            for (int j = 1; j < 9; j++){
+                ChessPiece piece = board.getBoard()[i-1][j-1];
+                if (piece.getTeamColor() != teamColor){
+                    //TODO CHECK PROMOTION PIECE?
+                    ChessMove kingMove = new ChessMove(new ChessPosition(i,j), this.board.getKingPos(teamColor), null);
+                    Collection<ChessMove> moves = piece.pieceMoves(board, new ChessPosition(i,j));
+                    if (moves.contains(kingMove)){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**
