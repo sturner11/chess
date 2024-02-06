@@ -646,7 +646,7 @@ public class ChessGameTests {
                     | | | |q| |k| | |
                     | | | | | | | | |
                     """));
-
+            game.setTeamTurn(ChessGame.TeamColor.BLACK);
             // Knight moves
             ChessPosition knightPosition = getNewPosition(4, 3);
             var validMoves = loadMoves(knightPosition, new int[][]{{3, 5}, {6, 2}});
@@ -674,7 +674,7 @@ public class ChessGameTests {
                     | | | | | | | | |
                     | | | | | | | | |
                     """));
-
+            game.setTeamTurn(ChessGame.TeamColor.WHITE);
             ChessPosition rookPosition = getNewPosition(5, 6);
             var validMoves = loadMoves(rookPosition, new int[][]{
                     {5, 7}, {5, 5}, {5, 4}, {5, 3}, {5, 2}
