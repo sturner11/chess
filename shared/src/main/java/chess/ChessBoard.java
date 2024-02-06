@@ -26,22 +26,30 @@ public class ChessBoard {
     public ChessBoard(ChessBoard another) {
         this.whiteKingPos = another.whiteKingPos;
         this.blackKingPos = another.blackKingPos;
-        this.board = another.board;
+        for (int i = 0; i < 8; i++) {
+            for (int j= 0; j < 8; j++) {
+                this.board[i][j] = another.getBoard()[i][j];
+            }
+        }
     }
 
     @Override
     public String toString() {
-        StringBuilder stringed = new StringBuilder();
-        for (ChessPiece[] row : board){
-            for (ChessPiece piece : row){
-                if (piece == null){ stringed.append(" "); }
+        StringBuilder boardString = new StringBuilder();
+        for (int i = 7; i >= 0; i--){
+            ChessPiece[] row = this.board[i];
+            for (ChessPiece piece: row){
+                boardString.append("|");
+                if (piece != null) {
+                    boardString.append(piece.toString());
+                }
                 else {
-                stringed.append(piece.getPieceType().toString().charAt(0));}
-                stringed.append('|');
+                    boardString.append(" ");
+                }
             }
-            stringed.append('\n');
+            boardString.append("|\n");
         }
-        return stringed.toString();
+        return boardString.toString();
     }
 
     public ChessPiece[][] getBoard(){
@@ -59,6 +67,13 @@ public class ChessBoard {
             throw new Error("Piece not added, position already filled");
         }
         board[position.getRow()-1][position.getColumn()-1] = piece;
+        if (piece.getPieceType() == ChessPiece.PieceType.KING){
+            if (piece.getTeamColor() == ChessGame.TeamColor.WHITE){
+                this.whiteKingPos = position;
+            } else{
+                this.blackKingPos = position;
+            }
+        }
     }
 
     /**
@@ -115,25 +130,28 @@ public class ChessBoard {
         board[0][3] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
         board[7][4] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
         board[7][3] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
-        this.whiteKingPos = new ChessPosition(0,4);
-        this.blackKingPos = new ChessPosition(7,4);
+        this.whiteKingPos = new ChessPosition(1,5);
+        this.blackKingPos = new ChessPosition(8,5);
     }
 
     public void setPiece(ChessMove move) {
         int startRow = move.getStartPosition().getRow();
         int startCol = move.getStartPosition().getColumn();
-        int endRow = move.getStartPosition().getRow();
-        int endCol = move.getStartPosition().getColumn();
-
+        int endRow = move.getEndPosition().getRow();
+        int endCol = move.getEndPosition().getColumn();
         this.board[endRow - 1][endCol-1] = this.board[startRow - 1][startCol-1];
         this.board[startRow - 1][startCol-1] = null;
-        if (this.board[endRow - 1][endCol-1].getPieceType() == ChessPiece.PieceType.KING){
+        if (this.board[endRow - 1][endCol-1] != null &&
+                this.board[endRow - 1][endCol-1].getPieceType() == ChessPiece.PieceType.KING){
             switch (this.board[endRow - 1][endCol-1].getTeamColor()){
                 case ChessGame.TeamColor.WHITE:
                     this.whiteKingPos = new ChessPosition(endRow, endCol);
                 case ChessGame.TeamColor.BLACK:
                     this.blackKingPos = new ChessPosition(endRow, endCol);
             }
+        }
+        if (this.board[endRow - 1][endCol-1] != null && move.getPromotionPiece() != null){
+            this.board[endRow - 1][endCol-1] = new ChessPiece(this.board[endRow - 1][endCol-1].getTeamColor(), move.getPromotionPiece());
         }
     }
 

@@ -47,9 +47,11 @@ public class ChessPiece {
 
     @Override
     public String toString() {
-        return " "+
-                 type +
-                ' ';
+        if (color == ChessGame.TeamColor.WHITE){
+            return type.toString().substring(0,1);
+        } else {
+            return type.toString().substring(0,1).toLowerCase();
+        }
     }
 
     /**
