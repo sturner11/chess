@@ -20,7 +20,7 @@ public class KingMoveCalculator implements PieceMoveCalculator{
         int col = oCol;
         for (int i = oCol - 1; i < oCol + 2; i++){
             ChessPosition next = new ChessPosition(i, oCol);
-            if (i > 1 && i < 9 && row > 1 && (myBoard[row-1][i-1] == null || myBoard[row-1][i-1].getTeamColor() != piece.getTeamColor())) {
+            if (i > 1 && i < 9 && row >= 1 && (myBoard[row-1][i-1] == null || myBoard[row-1][i-1].getTeamColor() != piece.getTeamColor())) {
                 ChessMove move = new ChessMove(position, new ChessPosition(row, i), null);
                 moves.add(move);
             }

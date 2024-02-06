@@ -15,7 +15,7 @@ public class ChessGame {
     TeamColor teamTurn;
     public ChessGame() {
         this.board = new ChessBoard();
-        this.teamTurn = TeamColor.WHITE;
+        this.teamTurn = null;
     }
 
     /**
@@ -41,8 +41,12 @@ public class ChessGame {
     }
 
     public Collection<ChessMove> validMoves(ChessPosition startPosition, ChessGame.TeamColor color) {
+
         Collection<ChessMove> validMoves = new HashSet<ChessMove>();
         ChessPiece piece = this.board.getBoard()[startPosition.getRow() - 1][startPosition.getColumn() - 1];
+        if (color == null){ // in Some test they forget to set Whose turn it is.
+            color = piece.getTeamColor();
+        }
         if (piece != null && piece.getTeamColor() == color) {
             Collection<ChessMove> moves = piece.pieceMoves(board, startPosition);
             for (ChessMove move : moves) {
