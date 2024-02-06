@@ -134,7 +134,6 @@ public class ChessGame {
             }
         }
         return false;
-
     }
 
     /**
@@ -144,7 +143,10 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (isInCheck(teamColor) && possibleToMove(teamColor)){
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -155,16 +157,21 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        if (isInCheck(teamColor)) {
-            for (int i = 1; i < 9; i++){
-                for (int j = 1; j < 9; j++){
-                    ChessPiece piece = board.getBoard()[i-1][j-1];
-                    if (piece.getTeamColor() == teamColor){
-                        ChessPosition piecePosition = new ChessPosition(i, j);
-                        Collection<ChessMove> moves = validMoves(piecePosition);
-                        if (moves.isEmpty()){
-                            return false;
-                        }
+        if (!isInCheck(teamColor)) {
+            return possibleToMove(teamColor);
+        }
+       return false;
+    }
+
+    public boolean possibleToMove(TeamColor teamColor){
+        for (int i = 1; i < 9; i++){
+            for (int j = 1; j < 9; j++){
+                ChessPiece piece = board.getBoard()[i-1][j-1];
+                if (piece.getTeamColor() == teamColor){
+                    ChessPosition piecePosition = new ChessPosition(i, j);
+                    Collection<ChessMove> moves = validMoves(piecePosition);
+                    if (moves.isEmpty()){
+                        return false;
                     }
                 }
             }
@@ -187,6 +194,6 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        return this.getBoard();
+        return this.board;
     }
 }
