@@ -7,7 +7,7 @@ This project demonstrates mastery of proper software design, client/server archi
 The application implements a multiplayer chess server and a command line chess client.
 ### Server overview
 
-<a href="https://drive.google.com/uc?export=view&id=<1LAHxJWEmx9vFfzjdrsiU1YyzDIuyp77y>"><img src="https://drive.google.com/uc?export=view&id=<FILEID>" style="width: 650px; max-width: 100%; height: auto" title="ChessServerUML" />
+![Example Image](https://drive.google.com/uc?id=1LAHxJWEmx9vFfzjdrsiU1YyzDIuyp77y)
 
 
 
