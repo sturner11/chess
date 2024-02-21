@@ -110,10 +110,9 @@ public class ChessGame {
 
     @Override
     public String toString() {
-        return "ChessGame{" +
-                "board=" + board +
+        return  board +
                 ", teamTurn=" + teamTurn +
-                '}';
+                '\n';
     }
 
     @Override
@@ -143,7 +142,8 @@ public class ChessGame {
                     if (piece.getPieceType() == ChessPiece.PieceType.PAWN){
                         if ((piece.getTeamColor() == TeamColor.BLACK && i == 2) ||
                                 (piece.getTeamColor() == TeamColor.WHITE && i == 7)){
-                            ChessMove kingMove = new ChessMove(new ChessPosition(i, j), this.board.getKingPos(teamColor), ChessPiece.PieceType.QUEEN);
+                            ChessMove kingMove =
+                                    new ChessMove(new ChessPosition(i, j), this.board.getKingPos(teamColor), ChessPiece.PieceType.QUEEN);
                             Collection<ChessMove> moves = piece.pieceMoves(board, new ChessPosition(i,j));
                             if (moves.contains(kingMove)){
                                 return true;

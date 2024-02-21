@@ -9,8 +9,8 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessMove {
-    private ChessPosition startPosition;
-    private ChessPosition endPosition;
+    private final ChessPosition startPosition;
+    private final ChessPosition endPosition;
     private ChessPiece.PieceType promotionPiece;
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
                      ChessPiece.PieceType promotionPiece) {
@@ -58,8 +58,12 @@ public class ChessMove {
         ChessMove other = (ChessMove) o;
 //TODO Add promotion piece
         if (this.promotionPiece != null && other.promotionPiece != null) {
-            return endPosition.equals(other.endPosition) && startPosition.equals(other.startPosition) && promotionPiece.equals(other.promotionPiece);
-        } else if (this.promotionPiece == null && other.promotionPiece == null){ return endPosition.equals(other.endPosition) && startPosition.equals(other.startPosition);
+            return endPosition.equals(other.endPosition) &&
+                    startPosition.equals(other.startPosition) &&
+                    promotionPiece.equals(other.promotionPiece);
+        } else if (this.promotionPiece == null
+                && other.promotionPiece == null)
+            { return endPosition.equals(other.endPosition) && startPosition.equals(other.startPosition);
         } else { return false ;}
     }
 

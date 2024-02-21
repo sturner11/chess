@@ -9,7 +9,7 @@ import java.util.Arrays;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    private ChessPiece[][] board = new ChessPiece[8][8];
+    private final ChessPiece[][] board = new ChessPiece[8][8];
     private ChessPosition blackKingPos;
     private ChessPosition whiteKingPos;
 
@@ -41,7 +41,7 @@ public class ChessBoard {
             for (ChessPiece piece: row){
                 boardString.append("|");
                 if (piece != null) {
-                    boardString.append(piece.toString());
+                    boardString.append(piece);
                 }
                 else {
                     boardString.append(" ");
@@ -151,7 +151,8 @@ public class ChessBoard {
             }
         }
         if (this.board[endRow - 1][endCol-1] != null && move.getPromotionPiece() != null){
-            this.board[endRow - 1][endCol-1] = new ChessPiece(this.board[endRow - 1][endCol-1].getTeamColor(), move.getPromotionPiece());
+            this.board[endRow - 1][endCol-1] =
+                    new ChessPiece(this.board[endRow - 1][endCol-1].getTeamColor(), move.getPromotionPiece());
         }
     }
 
