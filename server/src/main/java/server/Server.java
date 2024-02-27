@@ -20,16 +20,24 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
-        Spark.post("/clear", this::clear);
+        Spark.delete("/db", this::clear);
+        Spark.put("/user", this::register);
         Spark.awaitInitialization();
         return Spark.port();
     }
 
+    private Object register(Request request, Response response) {
+        userService.register(response.username, response.password, response.email);
+        response.status();
+    }
+
+
     private Object clear(Request request, Response response) {
         boolean userCleared = userService.clear();
+        response.status();
 //        boolean gamesCleared = gameService.clear();
 //        boolean authCleared = authService.clear();
-        return userCleared ;
+        return userCleared;
 //                && gamesCleared && authCleared;
     }
 
