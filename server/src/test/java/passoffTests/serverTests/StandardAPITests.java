@@ -97,6 +97,7 @@ public class StandardAPITests {
 
         TestModels.TestLoginRegisterResult loginResult = serverFacade.login(loginRequest);
 
+
         Assertions.assertEquals(HttpURLConnection.HTTP_OK, serverFacade.getStatusCode(),
                 "Server response code was not 200 OK");
         Assertions.assertFalse(
@@ -627,7 +628,7 @@ public class StandardAPITests {
         TestModels.TestRegisterRequest registerRequest = new TestModels.TestRegisterRequest();
         registerRequest.username = "a";
         registerRequest.password = "A";
-        registerRequest.email = "a.A";
+            registerRequest.email = "a.A";
         TestModels.TestLoginRegisterResult userA = serverFacade.register(registerRequest);
 
         registerRequest.username = "b";

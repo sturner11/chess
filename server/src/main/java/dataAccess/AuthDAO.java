@@ -20,8 +20,17 @@ public class AuthDAO implements DAO{
 
     public String createAuth(String username) {
         String authToken = UUID.randomUUID().toString();
-        localDB.put(username, authToken);
+        localDB.put(authToken, username);
         return authToken;
+    }
+
+
+    public boolean logOutUser(String authToken) {
+        return localDB.remove(authToken) != null;
+    }
+
+    public String checkAuth(String authToken) {
+        return localDB.get(authToken);
     }
 }
 
