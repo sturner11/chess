@@ -1,5 +1,9 @@
 package server;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import dataAccess.DataAccessException;
+import models.User;
 import services.UserService;
 import spark.*;
 
@@ -21,14 +25,27 @@ public class Server {
 
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", this::clear);
-        Spark.put("/user", this::register);
+        Spark.post("/user", this::register);
         Spark.awaitInitialization();
         return Spark.port();
     }
 
-    private Object register(Request request, Response response) {
-        userService.register(response.username, response.password, response.email);
-        response.status();
+    private Object register(Request request, Response response) throws DataAccessException {
+        try {
+            var body = new Gson().fromJson(request.body(), User.class);
+            String authToken = userService.register(body.username(), body.password(), body.email());
+            response.status(200);
+            response.body(authToken);
+            JsonObject resp = new JsonObject();
+            resp.addProperty("Auth_Token", authToken);
+            resp.addProperty("Status", 200);
+            return resp;
+        } catch(DataAccessException e) {
+            JsonObject resp = new JsonObject();
+            resp.addProperty("Error_Message", e.getMessage());
+            resp.addProperty("Status", 404);
+            return resp;
+        }
     }
 
 

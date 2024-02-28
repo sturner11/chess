@@ -1,15 +1,17 @@
 package dataAccess;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class AuthDAO implements DAO{
     Map<String, String> localDB;
     public AuthDAO() {
+        localDB = new HashMap<>();
     }
 
     public boolean clear(){
-        localDB = null;
+        localDB = new HashMap<>();
         return true;
     }
 

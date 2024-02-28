@@ -10,6 +10,7 @@ public class UserService {
 
     public UserService() {
         this.userDAO = new UserDAO();
+        this.authDAO = new AuthDAO();
     }
 
 //    public AuthData register(UserData user) {}
@@ -19,13 +20,12 @@ public class UserService {
     public boolean clear() {
         return this.userDAO.clear();
     }
-    public String register(String username, String password, String email) {
-        try {
-            this.userDAO.getUser();
-            this.userDAO.createUser(username, password, email);
-            return this.authDAO.createAuth(username);
-        } catch (DataAccessException e){
-            return e.getMessage();
+    public String register(String username, String password, String email) throws DataAccessException {
+            if (!this.userDAO.userExists(username)) {
+                this.userDAO.createUser(username, password, email);
+                return this.authDAO.createAuth(username);
+            } else {
+                throw new DataAccessException("User already exists");
         }
 
     }

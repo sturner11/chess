@@ -6,6 +6,7 @@ import java.util.Map;
 public class UserDAO implements DAO{
     Map<String, Map<String, String>> localDB;
     public UserDAO() {
+        localDB = new HashMap<>();
     }
 
     public boolean clear(){
@@ -13,12 +14,8 @@ public class UserDAO implements DAO{
         return true;
     }
 
-    public String getUser(String user) throws DataAccessException {
-        if (localDB.get(user) != null) {
-            return localDB.get(user).toString();
-        } else {
-            throw new DataAccessException("No Such User in DB");
-        }
+    public boolean userExists(String user) throws DataAccessException {
+        return this.localDB.get(user) == null;
     }
 
     public void createUser(String username, String password, String email) {
