@@ -11,10 +11,10 @@ import java.util.HashSet;
 public class RookMoveCalculator implements PieceMoveCalculator{
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
         HashSet<ChessMove> moves = new HashSet<ChessMove>();
-        int ori_row = position.getRow();
-        int ori_col = position.getColumn();
-        int row = ori_row;
-        int col = ori_col;
+        int oriRow = position.getRow();
+        int oriCol = position.getColumn();
+        int row = oriRow;
+        int col = oriCol;
 
         ChessPiece piece = board.getPiece(position);
         ChessPiece otherPiece;
@@ -31,7 +31,7 @@ public class RookMoveCalculator implements PieceMoveCalculator{
             } else if (board.getBoard()[row-1][col-1] != piece){ break;}
             row ++;
         }
-        row = ori_row;
+        row = oriRow;
         while (row > 0 ){
             if (board.getBoard()[row-1][col-1] == null){
                 move = new ChessMove(position, new ChessPosition(row, col), null);
@@ -44,7 +44,7 @@ public class RookMoveCalculator implements PieceMoveCalculator{
             row --;
         }
         // Sides
-        row = ori_row;
+        row = oriRow;
         while (col < 9){
             if (board.getBoard()[row-1][col-1] == null){
                 move = new ChessMove(position, new ChessPosition(row, col), null);
@@ -57,7 +57,7 @@ public class RookMoveCalculator implements PieceMoveCalculator{
             col ++;
         }
 
-        col = ori_col;
+        col = oriCol;
         while (col > 0){
             if (board.getBoard()[row-1][col-1] == null){
                 move = new ChessMove(position, new ChessPosition(row, col), null);

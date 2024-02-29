@@ -12,10 +12,10 @@ public class DiagMovement {
 
     public static Collection<ChessMove> move(ChessBoard board, ChessPosition position) {
         HashSet<ChessMove> moves = new HashSet<ChessMove>() ;
-        int ori_row = position.getRow();
-        int ori_col = position.getColumn();
-        int row = ori_row;
-        int col = ori_col;
+        int oriRow = position.getRow();
+        int oriCol = position.getColumn();
+        int row = oriRow;
+        int col = oriCol;
         ChessMove move = null;
         ChessPiece currentPiece = board.getBoard()[row-1][col-1];
         ChessPiece otherPiece = null;
@@ -32,8 +32,8 @@ public class DiagMovement {
                 break;
             }
         }
-        row = ori_row;
-        col = ori_col;
+        row = oriRow;
+        col = oriCol;
         // NW TODO Check this? All row > 1
         while (row > 1 && col < 8) {
             row --;
@@ -48,8 +48,8 @@ public class DiagMovement {
                 break;
             }
         }
-        row = ori_row;
-        col = ori_col;
+        row = oriRow;
+        col = oriCol;
         // SE
         while (col > 1 && row < 8) {
             row ++;
@@ -64,8 +64,8 @@ public class DiagMovement {
                 break;
             }
         }
-        row = ori_row;
-        col = ori_col;
+        row = oriRow;
+        col = oriCol;
         // SW
         while (col > 1 && row > 1) {
             row--;

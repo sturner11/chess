@@ -45,9 +45,6 @@ public class Game {
         return gameName;
     }
 
-    public String whiteUsername() {
-        return whiteUsername;
-    }
     public String blackUsername() {
         return blackUsername;
     }
@@ -56,9 +53,7 @@ public class Game {
         this.whiteUsername = whiteUsername;
     }
 
-    public void setBlackUsername(String blackUsername) {
-        this.blackUsername = blackUsername;
-    }
+
 
     public Integer gameID() {
         return gameID;

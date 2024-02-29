@@ -9,14 +9,14 @@ public class KnightMoveCalculator implements PieceMoveCalculator{
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
         HashSet<ChessMove> moves = new HashSet<ChessMove>();
-        int ori_row = position.getRow();
-        int ori_col = position.getColumn();
-        int row = ori_row + 2;
-        int col = ori_col + 1;
+        int oriRow = position.getRow();
+        int oricol = position.getColumn();
+        int row = oriRow + 2;
+        int col = oricol + 1;
         int rowCount = 0;
         int colCount = 0;
         ChessMove move = null;
-        ChessPiece currentPiece = board.getBoard()[ori_row - 1][ori_col - 1];
+        ChessPiece currentPiece = board.getBoard()[oriRow - 1][oricol - 1];
         // North moves
         if (row < 8 && col < 8 && otherTeam(row, col, board, currentPiece.getTeamColor())) {
             move = new ChessMove(position, new ChessPosition(row, col), null);
