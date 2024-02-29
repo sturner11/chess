@@ -10,12 +10,8 @@ public class AuthDAO implements DAO{
         localDB = new HashMap<>();
     }
 
-    public boolean clear(){
+    public void clear(){
         localDB = new HashMap<>();
-        return true;
-    }
-
-    public void getUser() {
     }
 
     public String createAuth(String username) {

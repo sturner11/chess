@@ -10,12 +10,11 @@ public class UserDAO implements DAO{
         localDB = new HashMap<>();
     }
 
-    public boolean clear(){
+    public void clear(){
         localDB = new HashMap<>();
-        return true;
     }
 
-    public boolean userExists(String user) throws DataAccessException {
+    public boolean userExists(String user) {
         return this.localDB.get(user) != null;
     }
 
@@ -27,7 +26,6 @@ public class UserDAO implements DAO{
     }
 
     public boolean authenticate(String username, String password) {
-        boolean check = Objects.equals(this.localDB.get(username).get("password"), password);
-        return check;
+        return Objects.equals(this.localDB.get(username).get("password"), password);
     }
 }

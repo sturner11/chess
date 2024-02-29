@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class GameService {
 
-    GameDAO gameDAO;
+    final GameDAO gameDAO;
 
     public GameService() {
         this.gameDAO = new GameDAO();

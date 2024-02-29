@@ -1,10 +1,10 @@
 package dataAccess;
 
 import models.Game;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class GameDAO {
     Map<Integer, Game> localDB;
@@ -13,7 +13,7 @@ public class GameDAO {
     }
     Integer currentID = 1;
 
-    public Game createGame(String authToken, String gameName) throws DataAccessException {
+    public Game createGame(String authToken, String gameName) {
             Game game = new Game(gameName, currentID);
             localDB.put(currentID, game);
             Integer gameID = currentID;
@@ -22,9 +22,13 @@ public class GameDAO {
     }
 
     public Game joinGame(String authToken, String playerColor, Integer gameID, String userName) throws DataAccessException {
-        if (localDB.get(gameID) != null && localDB.get(gameID).isAvailable(playerColor)){
-            localDB.get(gameID).setColor(playerColor, userName);
-            return localDB.get(gameID);
+        if (localDB.get(gameID) != null ){
+            if (localDB.get(gameID).isAvailable(playerColor)) {
+                localDB.get(gameID).setColor(playerColor, userName);
+                return localDB.get(gameID);
+            } else {
+                throw new DataAccessException("error", 403);
+            }
         } else {
             throw new DataAccessException("error", 400);
         }

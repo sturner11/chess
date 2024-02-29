@@ -1,12 +1,11 @@
 package models;
 
-import chess.exceptions.DataAccessException;
 
 import java.util.Objects;
 
 public class Game {
-    String gameName;
-    Integer gameID;
+    final String gameName;
+    final Integer gameID;
     String whiteUsername;
     String blackUsername;
 

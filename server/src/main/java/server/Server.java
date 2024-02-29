@@ -13,14 +13,13 @@ import java.util.Map;
 import java.util.UUID;
 
 public class Server {
-    UserService userService;
-    GameService gameService;
+    final UserService userService;
+    final GameService gameService;
 
 
     public Server(){
         this.userService = new UserService();
         this.gameService = new GameService();
-//        this.authService = new AuthService();
     }
 
     public int run(int desiredPort) {

@@ -2,5 +2,5 @@ package dataAccess;
 
 public interface DAO{
 
-    public boolean clear();
+    void clear();
 }

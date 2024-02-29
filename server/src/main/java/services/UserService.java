@@ -5,17 +5,13 @@ import dataAccess.DataAccessException;
 import dataAccess.UserDAO;
 
 public class UserService {
-    UserDAO userDAO;
-    AuthDAO authDAO;
+    final UserDAO userDAO;
+    final AuthDAO authDAO;
 
     public UserService() {
         this.userDAO = new UserDAO();
         this.authDAO = new AuthDAO();
     }
-
-//    public AuthData register(UserData user) {}
-//    public AuthData login(UserData user) {}
-//    public void logout(UserData user) {}
 
     public void clear() {
          this.userDAO.clear();
@@ -45,7 +41,7 @@ public class UserService {
     public void logout(String authToken) throws DataAccessException {
         if (!authDAO.logOutUser(authToken)){
             throw new DataAccessException("error", 401);
-        };
+        }
     }
 
     public String checkAuth(String authToken) throws DataAccessException {

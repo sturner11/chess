@@ -1,6 +1,6 @@
 package services;
 
 public class Service {
-    Service() {};
+    Service() {}
 //    Auth
 }

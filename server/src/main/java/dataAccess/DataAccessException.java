@@ -8,8 +8,8 @@ public class DataAccessException extends Exception{
         return status;
     }
 
-    int status;
-    public DataAccessException(String message, int status) {
+    final int status;
+    public DataAccessException(String message, Integer status) {
         super(message);
         this.status = status;
     }
