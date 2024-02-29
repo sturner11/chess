@@ -8,6 +8,8 @@ import chess.ChessPosition;
 import java.util.Collection;
 import java.util.HashSet;
 
+import static chess.Pieces.DiagMovement.move;
+
 public class QueenMoveCalculator implements PieceMoveCalculator{
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position) {
         HashSet<ChessMove> moves = new HashSet<ChessMove>();
@@ -76,68 +78,9 @@ public class QueenMoveCalculator implements PieceMoveCalculator{
         move = null;
         ChessPiece currentPiece = board.getBoard()[row-1][col-1];
         otherPiece = null;
-        // NE
-        while (row < 8 && col < 8) {
-            row ++;
-            col ++;
-            otherPiece = board.getBoard()[row-1][col-1];
-            if (otherPiece != null && otherPiece.getTeamColor() == currentPiece.getTeamColor()){
-                break;
-            }
-            move = new ChessMove(position, new ChessPosition(row,col), null);
-            moves.add(move);
-            if (otherPiece != null){
-                break;
-            }
-        }
-        row = ori_row;
-        col = ori_col;
-        // NW TODO Check this? All row > 1
-        while (row > 1 && col < 8) {
-            row --;
-            col ++;
-            otherPiece = board.getBoard()[row-1][col-1];
-            if (otherPiece != null && otherPiece.getTeamColor() == currentPiece.getTeamColor()){
-                break;
-            }
-            move = new ChessMove(position, new ChessPosition(row,col), null);
-            moves.add(move);
-            if (otherPiece != null){
-                break;
-            }
-        }
-        row = ori_row;
-        col = ori_col;
-        // SE
-        while (col > 1 && row < 8) {
-            row ++;
-            col--;
-            otherPiece = board.getBoard()[row-1][col-1];
-            if (otherPiece != null && otherPiece.getTeamColor() == currentPiece.getTeamColor()){
-                break;
-            }
-            move = new ChessMove(position, new ChessPosition(row,col), null);
-            moves.add(move);
-            if (otherPiece != null){
-                break;
-            }
-        }
-        row = ori_row;
-        col = ori_col;
-        // SW
-        while (col > 1 && row > 1) {
-            row--;
-            col--;
-            otherPiece = board.getBoard()[row-1][col-1];
-            if (otherPiece != null && otherPiece.getTeamColor() == currentPiece.getTeamColor()){
-                break;
-            }
-            move = new ChessMove(position, new ChessPosition(row,col), null);
-            moves.add(move);
-            if (otherPiece != null){
-                break;
-            }
-        }
+        HashSet<ChessMove> bishopMoves = (HashSet<ChessMove>) DiagMovement.move(board, position);
+
+        moves.addAll(bishopMoves);
         return moves;
     }
 }
