@@ -52,7 +52,7 @@ public class Game {
     public void setColor(String playerColor, String userName) {
         if (Objects.equals(playerColor, "WHITE")){
             whiteUsername = userName;
-        } else {
+        } else if (Objects.equals(playerColor, "BLACK")){
             blackUsername = userName;
         }
     }
