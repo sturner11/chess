@@ -48,7 +48,7 @@ public class GameServiceTests {
     public void joinGameFail() throws Exception {
         Game game1 = gameService.joinGame("authToken", "GREEN", game.gameID(), "username");
         Game test = new Game("gameName", game1.gameID());
-        test.setWhiteUsername("username");
+        test.setWhiteUsername(null);
         Assertions.assertEquals(test, game1);
     }
 
