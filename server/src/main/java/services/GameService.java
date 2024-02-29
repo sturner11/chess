@@ -9,13 +9,17 @@ import java.util.Map;
 
 public class GameService {
 
-    final GameDAO gameDAO;
+    GameDAO gameDAO;
 
     public GameService() {
         this.gameDAO = new GameDAO();
     }
     public Game createGame(String authToken, String gameName) throws DataAccessException {
+        if (gameName != null) {
             return gameDAO.createGame(authToken, gameName);
+        } else {
+                throw new DataAccessException("error", 403);
+            }
         }
 
     public Game joinGame(String authToken, String playerColor, Integer gameID, String userName) throws DataAccessException {
