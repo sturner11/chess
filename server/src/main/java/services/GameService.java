@@ -25,5 +25,9 @@ public class GameService {
     public ArrayList<Game> listGames() {
         return gameDAO.listGames();
     }
+
+    public void clear() {
+        gameDAO.clear();
+    }
 }
 

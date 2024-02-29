@@ -17,8 +17,9 @@ public class UserService {
 //    public AuthData login(UserData user) {}
 //    public void logout(UserData user) {}
 
-    public boolean clear() {
-        return this.userDAO.clear();
+    public void clear() {
+         this.userDAO.clear();
+         this.authDAO.clear();
     }
     public String register(String username, String password, String email) throws DataAccessException {
         if (username != null && password != null) {

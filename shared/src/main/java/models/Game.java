@@ -1,5 +1,7 @@
 package models;
 
+import chess.exceptions.DataAccessException;
+
 import java.util.Objects;
 
 public class Game {

@@ -15,7 +15,7 @@ import java.util.UUID;
 public class Server {
     UserService userService;
     GameService gameService;
-//    AuthService authService;
+
 
     public Server(){
         this.userService = new UserService();
@@ -118,14 +118,11 @@ public class Server {
 
 
     private Object clear(Request request, Response response) {
-        boolean userCleared = userService.clear();
-        response.status();
-        JsonObject resp = new JsonObject();
-        resp.addProperty("Status", 200);
-//        boolean gamesCleared = gameService.clear();
-//        boolean authCleared = authService.clear();
-        return resp;
-//                && gamesCleared && authCleared;
+        //            userService.checkAuth(request.headers("Authorization"));
+        userService.clear();
+        gameService.clear();
+        return new JsonObject();
+
     }
 
     public void stop() {
