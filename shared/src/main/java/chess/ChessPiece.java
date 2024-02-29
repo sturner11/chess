@@ -88,7 +88,6 @@ public class ChessPiece {
                 return calcQueen.pieceMoves(board,myPosition);
 
         }
-        // TODO Remove after adding statments;
         return null;
 
     }

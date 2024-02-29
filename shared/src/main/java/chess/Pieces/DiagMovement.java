@@ -34,7 +34,6 @@ public class DiagMovement {
         }
         row = oriRow;
         col = oriCol;
-        // NW TODO Check this? All row > 1
         while (row > 1 && col < 8) {
             row --;
             col ++;

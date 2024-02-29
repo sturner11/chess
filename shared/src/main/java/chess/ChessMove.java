@@ -55,7 +55,6 @@ public class ChessMove {
             return false;
         }
         ChessMove other = (ChessMove) o;
-//TODO Add promotion piece
         if (this.promotionPiece != null && other.promotionPiece != null) {
             return endPosition.equals(other.endPosition) &&
                     startPosition.equals(other.startPosition) &&

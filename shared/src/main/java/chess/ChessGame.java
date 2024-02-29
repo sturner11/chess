@@ -57,7 +57,7 @@ public class ChessGame {
                     for (int j = 1; j < 9; j++){
                         ChessPiece testPiece = test.getBoard()[i-1][j-1];
                         if (testPiece != null &&
-                                testPiece.getTeamColor() != color){ //TODO should be same as is in check
+                                testPiece.getTeamColor() != color){
                             ChessMove kingMove = new ChessMove(new ChessPosition(i,j), test.getKingPos(color),
                                     null);
                             Collection<ChessMove> testMoves = piece.pieceMoves(test, new ChessPosition(i,j));
