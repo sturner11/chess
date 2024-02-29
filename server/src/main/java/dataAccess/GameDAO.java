@@ -26,7 +26,7 @@ public class GameDAO {
             localDB.get(gameID).setColor(playerColor, userName);
             return localDB.get(gameID);
         } else {
-            throw new DataAccessException("error", 400);
+            throw new DataAccessException("error", 403);
         }
     }
 
