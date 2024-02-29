@@ -8,6 +8,7 @@ import services.GameService;
 import services.UserService;
 import spark.*;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
 
@@ -42,9 +43,9 @@ public class Server {
     private Object listGame(Request request, Response response) {
         try {
             var userName = userService.checkAuth(request.headers("Authorization"));
-            var games = gameService.listGames();
+            ArrayList<Game> games = gameService.listGames();
             response.status(200);
-            return new Gson().toJson(games);
+            return new Gson().toJson(Map.of("games",games));
         } catch(DataAccessException e){
             response.status(e.getStatus());
             return new Gson().toJson(new ErrorMessage(e.getMessage()));
@@ -53,9 +54,9 @@ public class Server {
 
     private Object joinGame(Request request, Response response) {
         try {
-            var body = new Gson().fromJson(request.body(), Game.class);
+            var body = new Gson().fromJson(request.body(), GameBody.class);
             var userName = userService.checkAuth(request.headers("Authorization"));
-            gameService.joinGame(request.headers("Authorization"), body.playerColor(), body.gameID(), userName);
+            Game game = gameService.joinGame(request.headers("Authorization"), body.playerColor(), body.gameID(), userName);
             response.status(200);
             return new Gson().toJson(Map.of("gameID", body.gameID()));
         } catch(DataAccessException e){
@@ -66,9 +67,9 @@ public class Server {
 
     private Object createGame(Request request, Response response) {
         try {
-            var body = new Gson().fromJson(request.body(), Games.class);
+            var body = new Gson().fromJson(request.body(), GameBody.class);
             userService.checkAuth(request.headers("Authorization"));
-            Games game = gameService.createGame(request.headers("Authorization"), body.gameName());
+            Game game = gameService.createGame(request.headers("Authorization"), body.gameName());
             response.status(200);
             return new Gson().toJson(game);
         } catch(DataAccessException e){
