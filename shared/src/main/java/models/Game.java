@@ -41,13 +41,7 @@ public class Game {
         this.blackUsername = null;
     }
 
-    public String gameName() {
-        return gameName;
-    }
 
-    public String blackUsername() {
-        return blackUsername;
-    }
 
     public void setWhiteUsername(String whiteUsername) {
         this.whiteUsername = whiteUsername;
