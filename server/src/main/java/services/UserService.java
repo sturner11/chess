@@ -4,11 +4,13 @@ import dataAccess.AuthDAO;
 import dataAccess.DataAccessException;
 import dataAccess.UserDAO;
 
+import java.sql.SQLException;
+
 public class UserService {
     final UserDAO userDAO;
     final AuthDAO authDAO;
 
-    public UserService() {
+    public UserService() throws DataAccessException {
         this.userDAO = new UserDAO();
         this.authDAO = new AuthDAO();
     }
@@ -17,7 +19,7 @@ public class UserService {
          this.userDAO.clear();
          this.authDAO.clear();
     }
-    public String register(String username, String password, String email) throws DataAccessException {
+    public String register(String username, String password, String email) throws DataAccessException, SQLException {
         if (username != null && password != null) {
             if (!this.userDAO.userExists(username)) {
                 this.userDAO.createUser(username, password, email);

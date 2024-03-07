@@ -8,18 +8,23 @@ import services.GameService;
 import services.UserService;
 import spark.*;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
 
 public class Server {
-    final UserService userService;
-    final GameService gameService;
+    UserService userService;
+    GameService gameService;
 
 
-    public Server(){
-        this.userService = new UserService();
-        this.gameService = new GameService();
+    public Server()  {
+        try {
+            this.userService = new UserService();
+            this.gameService = new GameService();
+        } catch(DataAccessException e){
+            return; // TODO: FIX Error
+        }
     }
 
     public int run(int desiredPort) {
@@ -112,6 +117,8 @@ public class Server {
             int check = e.getStatus();
             response.status(e.getStatus());
             return new Gson().toJson(new ErrorMessage(e.getMessage()));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
