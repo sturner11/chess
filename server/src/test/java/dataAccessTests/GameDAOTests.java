@@ -67,6 +67,17 @@ public class GameDAOTests {
         Assertions.assertEquals(games, test);
     }
 
+    @Test
+    @DisplayName("Success")
+    public void clearSuccess() throws Exception {
+        gameDAO.createGame("abcd", "helo");
+        gameDAO.clear();
+        ArrayList<Game> games = gameDAO.listGames();
+        ArrayList<Game> test = new ArrayList<>();
+        Assertions.assertEquals(games, test);
+    }
+
+
 
 
 }
