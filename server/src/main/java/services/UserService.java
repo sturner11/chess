@@ -32,7 +32,7 @@ public class UserService {
         }
     }
 
-    public String login(String username, String password) throws DataAccessException {
+    public String login(String username, String password) throws DataAccessException, SQLException {
         if (this.userDAO.userExists(username) && this.userDAO.authenticate(username, password))  {
             return this.authDAO.createAuth(username);
         } else {
@@ -46,7 +46,7 @@ public class UserService {
         }
     }
 
-    public String checkAuth(String authToken) throws DataAccessException {
+    public String checkAuth(String authToken) throws DataAccessException, SQLException {
         var userName = authDAO.checkAuth(authToken);
         if (userName != null) {
             return userName;
