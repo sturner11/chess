@@ -14,7 +14,16 @@ public class UserDAO implements DAO{
     }
 
     public void clear(){
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement
+                    ("DROP TABLES users")) {
+                var rs = preparedStatement.execute();
 
+
+            }
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public boolean userExists(String user) {
@@ -49,7 +58,16 @@ public class UserDAO implements DAO{
     }
 
     public boolean authenticate(String username, String password) {
-        return true;
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement
+                    ("SELECT password FROM users WHERE username = " + "'" + username + "'")) {
+                var rs = preparedStatement.executeQuery();
+                return rs.next() && passwordMatch(password, rs.getString("password"));
+
+            }
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

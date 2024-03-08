@@ -14,7 +14,9 @@ public class Main {
 //        server.run(8080);
         UserDAO userDAO = new UserDAO();
 //        userDAO.createUser("username1", "password", "email");
-        System.out.println(userDAO.userExists("username1"));
+        System.out.println(userDAO.userExists("username"));
+        System.out.println(userDAO.authenticate("username", "password"));
+//        userDAO.clear();
 
 
 
