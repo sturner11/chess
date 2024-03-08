@@ -78,6 +78,15 @@ public class DatabaseManager {
               `email` varchar(256) NOT NULL,
               PRIMARY KEY (`username`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS  games (
+              `gameId` int NOT NULL AUTO_INCREMENT,
+              `gameName` varchar(256) NOT NULL,
+              `WHITE` varchar(256) DEFAULT NULL,
+              `BLACK` varchar(256) DEFAULT NULL,
+              PRIMARY KEY (`gameId`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };
 

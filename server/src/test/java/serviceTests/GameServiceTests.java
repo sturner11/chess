@@ -13,7 +13,7 @@ public class GameServiceTests {
     private static Game game;
 
     @BeforeAll
-    public static void init() {
+    public static void init() throws DataAccessException {
         gameService = new GameService();
     }
     @BeforeEach

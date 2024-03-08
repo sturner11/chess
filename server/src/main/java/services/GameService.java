@@ -4,6 +4,7 @@ import dataAccess.DataAccessException;
 import dataAccess.GameDAO;
 import models.Game;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -11,7 +12,7 @@ public class GameService {
 
     GameDAO gameDAO;
 
-    public GameService() {
+    public GameService() throws DataAccessException {
         this.gameDAO = new GameDAO();
     }
     public Game createGame(String authToken, String gameName) throws DataAccessException {
@@ -22,11 +23,11 @@ public class GameService {
             }
         }
 
-    public Game joinGame(String authToken, String playerColor, Integer gameID, String userName) throws DataAccessException {
+    public Game joinGame(String authToken, String playerColor, Integer gameID, String userName) throws DataAccessException, SQLException {
         return gameDAO.joinGame(authToken, playerColor, gameID, userName);
     }
 
-    public ArrayList<Game> listGames() {
+    public ArrayList<Game> listGames() throws SQLException {
         return gameDAO.listGames();
     }
 

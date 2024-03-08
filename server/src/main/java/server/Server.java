@@ -53,6 +53,8 @@ public class Server {
         } catch(DataAccessException e){
             response.status(e.getStatus());
             return new Gson().toJson(new ErrorMessage(e.getMessage()));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -66,6 +68,8 @@ public class Server {
         } catch(DataAccessException e){
             response.status(e.getStatus());
             return new Gson().toJson(new ErrorMessage(e.getMessage()));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
