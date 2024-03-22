@@ -2,10 +2,12 @@ package models;
 
 
 import java.util.Objects;
+import com.google.gson.internal.LinkedTreeMap;
 
 public class Game {
     final String gameName;
     final Integer gameID;
+
 
     @Override
     public String toString() {
@@ -43,6 +45,8 @@ public class Game {
 
 
 
+
+
     public void setWhiteUsername(String whiteUsername) {
         this.whiteUsername = whiteUsername;
     }
@@ -52,6 +56,9 @@ public class Game {
     public Integer gameID() {
         return gameID;
     }
+    public String gameName() {return gameName;}
+    public String whiteUsername() {return whiteUsername;}
+    public String blackUsername() { return blackUsername;}
 
 
 
