@@ -98,7 +98,6 @@ public class ServerFacade {
 
     public  Map<String, String> createBody(String[] userArgs, String[] bodyParams) {
         if (userArgs.length - 1 != bodyParams.length){
-            System.out.println("Please enter the correct amount of arguments for command: " + userArgs[0]);
             return null;
         }
         Map<String, String> body = new HashMap<>();
@@ -221,5 +220,10 @@ public class ServerFacade {
 
     public String getAuth(){
         return this.auth;
+    }
+
+    public void clearAuth() {
+        auth = null;
+        loggedIn = false;
     }
 }

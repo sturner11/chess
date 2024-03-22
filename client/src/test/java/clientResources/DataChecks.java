@@ -78,5 +78,11 @@ public class DataChecks {
     public static String getObserveGame(int portString) {
         return "Server returned HTTP response code: 400 for URL: http://localhost:" + portString +"/game\n";
     }
+
+    public static String getLogoutFail(int portString) {
+
+        return "Server returned HTTP response code: 500 for URL: http://localhost:" + portString +"/session\n";
+
+    }
 }
 
