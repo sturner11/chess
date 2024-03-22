@@ -1,5 +1,3 @@
-import com.google.gson.Gson;
-import models.Game;
 import ui.ChessBoardDisplay;
 
 import java.util.*;
