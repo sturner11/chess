@@ -13,7 +13,6 @@ public class ServerFacade {
         String line = null;
         String command = null;
 
-        String auth = null;
         while (!Objects.equals(command, "quit")) {
             line = scanner.nextLine();
             var userArgs = line.split(" ");
@@ -42,7 +41,7 @@ public class ServerFacade {
                         createGame(userArgs);
                         break;
                     case "list":
-                        listGames(userArgs);
+                        listGames();
                         break;
                     case "join":
                         joinGame(userArgs);
@@ -123,7 +122,7 @@ public class ServerFacade {
         ChessBoardDisplay.main((String[]) resp.get("gameBoard"), "BLACK");
     }
 
-    private static void listGames(String[] userArgs) {
+    private static void listGames() {
         try {
             curlArgs = new String[]{"GET", auth, URL + "game"};
             Map<String, ArrayList<Map<String, Object>>> resp =  ClientCurl.makeReq(curlArgs);
@@ -165,13 +164,11 @@ public class ServerFacade {
             try {
                 Map resp = ClientCurl.makeReq(curlArgs);
                 assert resp != null;
-                // TODO check for bad login
                 auth = (String) resp.get("authToken");
                 loggedIn = true;
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
-            loggedIn = true;
         } else {
             System.out.println("Please enter the correct amount of arguments for command: " + userArgs[0]);
         }
