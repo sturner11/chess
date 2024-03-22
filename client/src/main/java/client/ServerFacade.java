@@ -1,14 +1,21 @@
+package client;
+
 import ui.ChessBoardDisplay;
 
 import java.util.*;
 
 public class ServerFacade {
-    private static final String URL = "http://localhost:8080/";
-    private static String auth;
-    private static String[] curlArgs;
-    private static boolean loggedIn = false;
+    private final String URL;
+    private  String auth;
+    private  String[] curlArgs;
+    private  boolean loggedIn = false;
 
-    public static void main(String[] args) {
+    public ServerFacade(int port, String serverUrl) {
+        URL = serverUrl + port +"/";
+
+    }
+
+    public  void run(String[] args) {
         Scanner scanner = new Scanner(System.in);
         String line = null;
         String command = null;
@@ -64,7 +71,7 @@ public class ServerFacade {
         }
     }
 
-    private static void logout() {
+      public void logout() {
         try {
             curlArgs = new String[]{"POST", null, URL + "user"};
             ClientCurl.makeReq(curlArgs);
@@ -74,7 +81,7 @@ public class ServerFacade {
         }
     }
 
-    private static void joinGame(String[] userArgs) {
+      public void joinGame(String[] userArgs) {
         Map<String, String> body = createBody(userArgs, new String[] {"gameID", "playerColor"});
         assert body != null;
         if (!body.isEmpty()){
@@ -89,7 +96,7 @@ public class ServerFacade {
         }
     }
 
-    private static Map<String, String> createBody(String[] userArgs, String[] bodyParams) {
+    public  Map<String, String> createBody(String[] userArgs, String[] bodyParams) {
         if (userArgs.length - 1 != bodyParams.length){
             System.out.println("Please enter the correct amount of arguments for command: " + userArgs[0]);
             return null;
@@ -101,7 +108,7 @@ public class ServerFacade {
         return body;
     }
 
-    private static void observeGame(String[] userArgs){
+    public  void observeGame(String[] userArgs){
         Map<String, String> body = createBody(userArgs, new String[] {"gameID"});
         assert body != null;
         if (!body.isEmpty()){
@@ -115,7 +122,7 @@ public class ServerFacade {
         }    
     }
 
-    private static void viewGame(Map<String, String> body) throws Exception {
+    public  void viewGame(Map<String, String> body) throws Exception {
         curlArgs = new String[]{"PUT", auth, URL + "game", body.toString()};
         Map resp = ClientCurl.makeReq(curlArgs);
         assert resp != null;
@@ -123,7 +130,7 @@ public class ServerFacade {
         ChessBoardDisplay.main((String[]) resp.get("gameBoard"), "BLACK");
     }
 
-    private static void listGames() {
+    public  void listGames() {
         try {
             curlArgs = new String[]{"GET", auth, URL + "game"};
             Map<String, ArrayList<Map<String, Object>>> resp =  ClientCurl.makeReq(curlArgs);
@@ -142,7 +149,7 @@ public class ServerFacade {
         }
     }
 
-    private static void createGame(String[] userArgs) {
+    public  void createGame(String[] userArgs) {
         Map<String, String> body = createBody(userArgs, new String[] {"gameName"});
         assert body != null;
         if (!body.isEmpty()){
@@ -157,7 +164,7 @@ public class ServerFacade {
         }
     }
 
-    private static void login(String[] userArgs) {
+    public  void login(String[] userArgs) {
         Map<String, String> body = createBody(userArgs, new String[] {"username", "password"});
         assert body != null;
         if (!body.isEmpty()){
@@ -175,10 +182,9 @@ public class ServerFacade {
         }
     }
 
-    private static void user( String[] userArgs) {
+    public void user( String[] userArgs) {
         Map<String, String> body = createBody(userArgs, new String[] {"username", "password", "email"});
-        assert body != null;
-        if (!body.isEmpty()){
+        if ( body != null && !body.isEmpty()){
             curlArgs = new String[]{"POST", null, URL + "user", body.toString()};
             try {
                 Map resp = ClientCurl.makeReq(curlArgs);
@@ -193,7 +199,7 @@ public class ServerFacade {
         }
     }
 
-    private static void help() {
+    public  void help() {
         String help;
         if (!loggedIn){
             help = """
@@ -214,5 +220,9 @@ public class ServerFacade {
                         """;
         }
         System.out.print(help);
+    }
+
+    public String getAuth(){
+        return this.auth;
     }
 }

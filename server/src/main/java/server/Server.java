@@ -133,7 +133,6 @@ public class Server {
 
 
     private Object clear(Request request, Response response) {
-        //            userService.checkAuth(request.headers("Authorization"));
         userService.clear();
         gameService.clear();
         return new JsonObject();
@@ -143,5 +142,10 @@ public class Server {
     public void stop() {
         Spark.stop();
         Spark.awaitStop();
+    }
+
+    public void clear(){
+        userService.clear();
+        gameService.clear();
     }
 }
