@@ -73,9 +73,10 @@ public class ServerFacade {
 
       public void logout() {
         try {
-            curlArgs = new String[]{"POST", null, URL + "user"};
+            curlArgs = new String[]{"DELETE", auth, URL + "session"};
             ClientCurl.makeReq(curlArgs);
             loggedIn = false;
+            auth = null;
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -83,8 +84,7 @@ public class ServerFacade {
 
       public void joinGame(String[] userArgs) {
         Map<String, String> body = createBody(userArgs, new String[] {"gameID", "playerColor"});
-        assert body != null;
-        if (!body.isEmpty()){
+        if ( body != null && !body.isEmpty()){
             try {
                 viewGame(body);
             } catch (Exception e) {
@@ -110,8 +110,7 @@ public class ServerFacade {
 
     public  void observeGame(String[] userArgs){
         Map<String, String> body = createBody(userArgs, new String[] {"gameID"});
-        assert body != null;
-        if (!body.isEmpty()){
+        if ( body != null && !body.isEmpty()){
             try {
                 viewGame(body);
             } catch (Exception e) {
@@ -151,8 +150,7 @@ public class ServerFacade {
 
     public  void createGame(String[] userArgs) {
         Map<String, String> body = createBody(userArgs, new String[] {"gameName"});
-        assert body != null;
-        if (!body.isEmpty()){
+        if ( body != null && !body.isEmpty()){
             try {
                 curlArgs = new String[]{"POST", auth, URL + "game", body.toString()};
                 ClientCurl.makeReq(curlArgs);
@@ -166,8 +164,7 @@ public class ServerFacade {
 
     public  void login(String[] userArgs) {
         Map<String, String> body = createBody(userArgs, new String[] {"username", "password"});
-        assert body != null;
-        if (!body.isEmpty()){
+        if ( body != null && !body.isEmpty()){
             curlArgs = new String[]{"POST", null, URL + "session", body.toString()};
             try {
                 Map resp = ClientCurl.makeReq(curlArgs);

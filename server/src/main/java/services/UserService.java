@@ -44,6 +44,7 @@ public class UserService {
         if (!authDAO.logOutUser(authToken)){
             throw new DataAccessException("error", 401);
         }
+
     }
 
     public String checkAuth(String authToken) throws DataAccessException, SQLException {

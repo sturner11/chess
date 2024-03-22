@@ -1,5 +1,6 @@
 package clientTests;
 import client.ServerFacade;
+import clientResources.DataChecks;
 import org.junit.jupiter.api.*;
 import server.Server;
 
@@ -12,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ServerFacadeTests {
     static ServerFacade facade;
     private static Server server;
+    private static int portString = 0;
 
     @BeforeAll
     public static void init() {
@@ -19,6 +21,7 @@ public class ServerFacadeTests {
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
         facade = new ServerFacade(port, "http://localhost:");
+        portString = port;
     }
     @BeforeEach
     public void clear(){
@@ -69,10 +72,7 @@ public class ServerFacadeTests {
         facade.help();
         System.setOut(output);
         String actualOutput = capturedOut.toString();
-        assert(actualOutput.contains("register <USERNAME> <PASSWORD> <EMAIL> - to create an account\n" +
-                "login <USERNAME> <PASSWORD> - to play chess\n" +
-                "quit -playing chess\n" +
-                "help - with possible commands"));
+        assert(actualOutput.contains(DataChecks.getNoAuthHelp()));
     }
 
     @Test
@@ -86,16 +86,122 @@ public class ServerFacadeTests {
         facade.help();
         System.setOut(output);
         String actualOutput = capturedOut.toString();
-        assert(actualOutput.contains("""
-                        create <NAME> - a game
-                        list - games
-                        join <ID> [WHITE|BLACK|<empty>} - a game
-                        observe <ID> - a game
-                        logout - when you are done
-                        quit -playing chess
-                        help - with possible commands
-                        """));
+        assertEquals(actualOutput,DataChecks.getAuthHelp());
     }
+
+    @Test
+    @DisplayName("CreateGameSuccess")
+    void createGameSuccess() throws Exception {
+        facade.user( new String[]{"register", "player1", "password", "p1@email.com"});
+        facade.user( new String[]{"login", "player1", "password"});
+        PrintStream output = System.out;
+        ByteArrayOutputStream capturedOut = new ByteArrayOutputStream();
+        System.setOut(new PrintStream((capturedOut)));
+        facade.createGame(new String[] {"create", "name"});
+        System.setOut(output);
+        String actualOutput = capturedOut.toString();
+        assertEquals(actualOutput, DataChecks.getCreateGameResp());
+    }
+
+    @Test
+    @DisplayName("createGameFailure")
+    void createGameFail() throws Exception {
+        facade.user( new String[]{"register", "player1", "password", "p1@email.com"});
+        facade.user( new String[]{"login", "player1", "password"});
+        PrintStream output = System.out;
+        ByteArrayOutputStream capturedOut = new ByteArrayOutputStream();
+        System.setOut(new PrintStream((capturedOut)));
+        facade.createGame(new String[] {"create"});
+        System.setOut(output);
+        String actualOutput = capturedOut.toString();
+        assertEquals(actualOutput,"Please enter the correct amount of arguments for command: create");
+    }
+
+    @Test
+    @DisplayName("JoinGameSuccess")
+    void joinGameSuccess() throws Exception {
+        facade.user( new String[]{"register", "player1", "password", "p1@email.com"});
+        facade.user( new String[]{"login", "player1", "password"});
+        facade.createGame(new String[] {"create", "name"});
+        PrintStream output = System.out;
+        ByteArrayOutputStream capturedOut = new ByteArrayOutputStream();
+        System.setOut(new PrintStream((capturedOut)));
+        facade.joinGame(new String[] {"join", "1", "WHITE"});
+        System.setOut(output);
+        String actualOutput = capturedOut.toString();
+        String vld = DataChecks.getJoinGameResp();
+        assertEquals(actualOutput.trim().replace("\r",""), DataChecks.getJoinGameResp().trim().replace("\r",""));
+    }
+
+    @Test
+    @DisplayName("joinGameFailure")
+    void joinGameFail() throws Exception {
+        facade.user( new String[]{"register", "player1", "password", "p1@email.com"});
+        facade.user( new String[]{"login", "player1", "password"});
+        facade.createGame(new String[] {"create"});
+        facade.joinGame(new String[] {"join", "1", "WHITE"});
+        PrintStream output = System.out;
+        ByteArrayOutputStream capturedOut = new ByteArrayOutputStream();
+        System.setOut(new PrintStream((capturedOut)));
+        facade.joinGame(new String[] {"join", "1", "WHITE"});
+        System.setOut(output);
+        String actualOutput = capturedOut.toString();
+        assertEquals(actualOutput.trim().replace("\r",""), DataChecks.getJoinGameFail(portString).trim().replace("\r",""));    }
+    @Test
+    @DisplayName("observeGameSuccess")
+    void observeGameSuccess() throws Exception {
+        facade.user( new String[]{"register", "player1", "password", "p1@email.com"});
+        facade.user( new String[]{"login", "player1", "password"});
+        facade.createGame(new String[] {"create", "name"});
+        PrintStream output = System.out;
+        ByteArrayOutputStream capturedOut = new ByteArrayOutputStream();
+        System.setOut(new PrintStream((capturedOut)));
+        facade.observeGame(new String[] {"observe", "1"});
+        System.setOut(output);
+        String actualOutput = capturedOut.toString();
+        assertEquals(actualOutput.trim().replace("\r",""), DataChecks.getJoinGameResp().trim().replace("\r",""));
+    }
+
+    @Test
+    @DisplayName("observeGameFailure")
+    void observeGameFail() throws Exception {
+        facade.user( new String[]{"register", "player1", "password", "p1@email.com"});
+        facade.user( new String[]{"login", "player1", "password"});
+        PrintStream output = System.out;
+        ByteArrayOutputStream capturedOut = new ByteArrayOutputStream();
+        System.setOut(new PrintStream((capturedOut)));
+        facade.observeGame(new String[] {"observe", "2"});
+        System.setOut(output);
+        String actualOutput = capturedOut.toString();
+        assertEquals(actualOutput.trim().replace("\r",""), DataChecks.getObserveGame(portString).trim().replace("\r",""));    }
+
+    @Test
+    @DisplayName("LogoutSuccess")
+    void logoutSuccess() throws Exception {
+        facade.user( new String[]{"register", "player1", "password", "p1@email.com"});
+        facade.login( new String[]{"login", "player1", "password"});
+        facade.logout();
+        assertNull(facade.getAuth());
+    }
+    @Test
+    @DisplayName("LogoutFailure")
+    void logoutFailure() throws Exception {
+        PrintStream output = System.out;
+        ByteArrayOutputStream capturedOut = new ByteArrayOutputStream();
+        System.setOut(new PrintStream((capturedOut)));
+        facade.help();
+        System.setOut(output);
+        String actualOutput = capturedOut.toString();
+        assert(actualOutput.contains(DataChecks.getNoAuthHelp()));
+    }
+
+
 }
+
+
+
+
+
+
 
 
