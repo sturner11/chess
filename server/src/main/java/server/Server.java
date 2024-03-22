@@ -46,6 +46,7 @@ public class Server {
 
     private Object listGame(Request request, Response response) {
         try {
+            // TODO: Make Game IDS integers
             var userName = userService.checkAuth(request.headers("Authorization"));
             ArrayList<Game> games = gameService.listGames();
             response.status(200);

@@ -83,22 +83,22 @@ public class Main {
                         ClientCurl.makeReq(curlArgs);
                         break;
                     case "list":
-                        curlArgs = new String[]{"GET", url + "game"};
+                        curlArgs = new String[]{"GET", auth, url + "game"};
                         ClientCurl.makeReq(curlArgs);
                         break;
                     case "join":
                         body.put("gameID", userArgs[1]);
                         body.put("playerColor", userArgs[2]);
-                        curlArgs = new String[]{"PUT", url + "user", body.toString()};
+                        curlArgs = new String[]{"PUT", auth,  url + "game", body.toString()};
                         ClientCurl.makeReq(curlArgs);
                         break;
                     case "observe":
                         body.put("gameID", userArgs[1]);
-                        curlArgs = new String[]{"PUT", url + "user", body.toString()};
+                        curlArgs = new String[]{"PUT", auth,  url + "game", body.toString()};
                         ClientCurl.makeReq(curlArgs);
                         break;
                     case "logout":
-                        curlArgs = new String[]{"POST", url + "user"};
+                        curlArgs = new String[]{"POST", null, url + "user"};
                         ClientCurl.makeReq(curlArgs);
                         break;
                     case "quit":
