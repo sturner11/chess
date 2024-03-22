@@ -40,6 +40,7 @@ public class Main {
                             Map resp = ClientCurl.makeReq(curlArgs);
                             assert resp != null;
                             auth = (String) resp.get("authToken");
+                            loggedIn = true;
                         } catch (DataAccessException ignored) {
                             // CHeck for errors?
                         }
@@ -85,21 +86,26 @@ public class Main {
                     case "list":
                         curlArgs = new String[]{"GET", auth, url + "game"};
                         ClientCurl.makeReq(curlArgs);
+                        //TODO: Format List
+                        //TODO: Map List to Id for join
                         break;
                     case "join":
                         body.put("gameID", userArgs[1]);
                         body.put("playerColor", userArgs[2]);
                         curlArgs = new String[]{"PUT", auth,  url + "game", body.toString()};
                         ClientCurl.makeReq(curlArgs);
+                        // TODO: Display game function
                         break;
                     case "observe":
                         body.put("gameID", userArgs[1]);
                         curlArgs = new String[]{"PUT", auth,  url + "game", body.toString()};
                         ClientCurl.makeReq(curlArgs);
+                        // TODO: Display game function
                         break;
                     case "logout":
                         curlArgs = new String[]{"POST", null, url + "user"};
                         ClientCurl.makeReq(curlArgs);
+                        loggedIn = false;
                         break;
                     case "quit":
                         break;
@@ -108,7 +114,7 @@ public class Main {
 
                 }
             }
-
+            System.out.println();
         }
     }
 }
