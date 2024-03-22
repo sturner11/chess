@@ -16,8 +16,9 @@ public class ServerFacade {
         while (!Objects.equals(command, "quit")) {
             line = scanner.nextLine();
             var userArgs = line.split(" ");
+            command = userArgs[0];
             if (!loggedIn) {
-                switch (userArgs[0]) {
+                switch (command) {
                     case "help":
                         help();
                         break;
