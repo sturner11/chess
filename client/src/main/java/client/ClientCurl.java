@@ -1,6 +1,7 @@
 package client;
 
 import com.google.gson.Gson;
+import dataAccess.DataAccessException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,7 +12,7 @@ import java.net.URISyntaxException;
 import java.util.Map;
 
 public class ClientCurl {
-    public static Map makeReq(String[] args) throws Exception {
+    public static Map makeReq(String[] args) throws DataAccessException, URISyntaxException, IOException {
         if (args.length >= 2) {
             var method = args[0];
             var auth = args[1];
@@ -51,7 +52,7 @@ public class ClientCurl {
         var statusCode = http.getResponseCode();
         var statusMessage = http.getResponseMessage();
         Map responseBody = readResponseBody(http);
-        System.out.printf("= Response =========\n[%d] %s\n\n%s\n\n", statusCode, statusMessage, responseBody);
+//        System.out.printf("= Response =========\n[%d] %s\n\n%s\n\n", statusCode, statusMessage, responseBody);
 
         return responseBody;
     }

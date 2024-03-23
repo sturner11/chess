@@ -102,7 +102,7 @@ public class ServerFacadeTests {
         facade.createGame(new String[]{"create", "name"});
         System.setOut(output);
         String actualOutput = capturedOut.toString();
-        assertEquals(actualOutput, DataChecks.getCreateGameResp());
+        assertEquals(DataChecks.getCreateGameResp().trim().replace("\r", ""),actualOutput.trim().replace("\r", ""));
     }
 
     @Test
@@ -131,7 +131,7 @@ public class ServerFacadeTests {
         facade.joinGame(new String[]{"join", "1", "WHITE"});
         System.setOut(output);
         String actualOutput = capturedOut.toString();
-        assertEquals(actualOutput.trim().replace("\r", ""), DataChecks.getJoinGameResp().trim().replace("\r", ""));
+        assertEquals(DataChecks.getJoinGameResp().trim().replace("\r", ""),actualOutput.trim().replace("\r", ""));
     }
 
     @Test
@@ -147,7 +147,7 @@ public class ServerFacadeTests {
         facade.joinGame(new String[]{"join", "1", "WHITE"});
         System.setOut(output);
         String actualOutput = capturedOut.toString();
-        assertEquals(actualOutput.trim().replace("\r", ""), DataChecks.getJoinGameFail(portString).trim().replace("\r", ""));
+        assertEquals(actualOutput.trim().replace("\r", ""), DataChecks.getJoinGameFail().trim().replace("\r", ""));
     }
 
     @Test
@@ -197,7 +197,7 @@ public class ServerFacadeTests {
         facade.logout();
         System.setOut(output);
         String actualOutput = capturedOut.toString();
-        assertEquals(actualOutput.trim().replace("\r", ""), DataChecks.getLogoutFail(portString).trim().replace("\r", ""));
+        assertEquals(actualOutput.trim().replace("\r", ""), DataChecks.getLogoutFail().trim().replace("\r", ""));
     }
 }
 

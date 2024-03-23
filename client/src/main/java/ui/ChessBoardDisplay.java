@@ -11,7 +11,7 @@ public class ChessBoardDisplay {
     private static final int BOARD_SIZE_IN_SQUARES = 10;
     private static final int SQUARE_SIZE_IN_CHARS = 1;
     private static final int LINE_WIDTH_IN_CHARS = 1;
-    private static String[]headers  = {" ", "a", "b", "c", "d", "e", "f", "g", "h", " "};
+    private static String[]headers  = {" ", "h", "g", "f", "e", "d", "c", "b", "a", " "};
 
     private static String[]rowVals = {"1", "2","3","4", "5", "6", "7", "8"};
 

@@ -1,7 +1,10 @@
 package client;
 
+import dataAccess.DataAccessException;
 import ui.ChessBoardDisplay;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.*;
 
 public class ServerFacade {
@@ -38,7 +41,7 @@ public class ServerFacade {
                     case "quit":
                         break;
                     default:
-                        System.out.println("Command not recognized, please try again");
+                        System.out.println("Command not recognized, please authenticate or try again");
                 }
             } else {
                 switch (userArgs[0]) {
@@ -78,7 +81,7 @@ public class ServerFacade {
             loggedIn = false;
             auth = null;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("User Logout failed. Please try again");
         }
     }
 
@@ -88,8 +91,7 @@ public class ServerFacade {
             try {
                 viewGame(body);
             } catch (Exception e) {
-                System.out.println(e.getMessage());
-                System.out.println("Please try again");
+                System.out.println("Could not join game. Please try again");
             }
         } else {
             System.out.println("Please enter the correct amount of arguments for command: " + userArgs[0]);
@@ -112,15 +114,15 @@ public class ServerFacade {
         if ( body != null && !body.isEmpty()){
             try {
                 viewGame(body);
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
+            } catch (DataAccessException | URISyntaxException | IOException e) {
+            System.out.println("Could not observe game. Please try again.");
             }
         } else {
             System.out.println("Please enter the correct amount of arguments for command: " + userArgs[0]);
         }    
     }
 
-    public  void viewGame(Map<String, String> body) throws Exception {
+    public  void viewGame(Map<String, String> body) throws URISyntaxException, IOException, DataAccessException {
         curlArgs = new String[]{"PUT", auth, URL + "game", body.toString()};
         Map resp = ClientCurl.makeReq(curlArgs);
         assert resp != null;
@@ -134,16 +136,18 @@ public class ServerFacade {
             Map<String, ArrayList<Map<String, Object>>> resp =  ClientCurl.makeReq(curlArgs);
             assert resp != null;
             ArrayList<Map<String, Object>> games = resp.get("games");
+            System.out.println("Games:");
             for (int i = 0; i < games.size(); ++i){
                 Map<String, Object> game = games.get(i);
                 double gameID = (double) game.get("gameID");
                 System.out.print(i+1);
-                System.out.println(". GameName:" + game.get("gameName")+ " GameID: " + gameID + " WHITE:" +
-                game.get("whiteUsername") + " BLACK:" + game.get("blackUsername"));
+                String white = game.get("whiteUsername") != null ? (String) game.get("whiteUsername") : "AVAILABLE";
+                String black = game.get("blackUsername") != null ? (String) game.get("blackUsername") : "AVAILABLE";
+                System.out.println(". GameName:" + game.get("gameName")+ " WHITE:" +
+                white + " BLACK:" + black);
             }
-            System.out.println(resp);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (DataAccessException | URISyntaxException | IOException e) {
+            System.out.println("Could not list Game");
         }
     }
 
@@ -153,8 +157,9 @@ public class ServerFacade {
             try {
                 curlArgs = new String[]{"POST", auth, URL + "game", body.toString()};
                 ClientCurl.makeReq(curlArgs);
+                System.out.println("Game successfully made. Use join command to start game");
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                System.out.println("Could not create game. Please try again");
             }
         } else {
             System.out.println("Please enter the correct amount of arguments for command: " + userArgs[0]);
@@ -168,10 +173,11 @@ public class ServerFacade {
             try {
                 Map resp = ClientCurl.makeReq(curlArgs);
                 assert resp != null;
+                System.out.println("User ogged in! Please type help to continue");
                 auth = (String) resp.get("authToken");
                 loggedIn = true;
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                System.out.println("User login failed. Please try again.");
             }
         } else {
             System.out.println("Please enter the correct amount of arguments for command: " + userArgs[0]);
@@ -184,11 +190,12 @@ public class ServerFacade {
             curlArgs = new String[]{"POST", null, URL + "user", body.toString()};
             try {
                 Map resp = ClientCurl.makeReq(curlArgs);
+                System.out.println("User Registered! Please type help to continue");
                 assert resp != null;
                 auth = (String) resp.get("authToken");
                 loggedIn = true;
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                System.out.println("Unable to register User, please try again");
             }
         } else {
             System.out.println("Please enter the correct amount of arguments for command: " + userArgs[0]);
