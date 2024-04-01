@@ -1,33 +1,49 @@
 package ui;
 
+import chess.ChessBoard;
+
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+
+import  ui.EscapeSequences.*;
 
 import static ui.EscapeSequences.*;
 
 public class ChessBoardDisplay {
 
-    private static final int BOARD_SIZE_IN_SQUARES = 10;
-    private static final int SQUARE_SIZE_IN_CHARS = 1;
-    private static final int LINE_WIDTH_IN_CHARS = 1;
-    private static String[]headers  = {" ", "h", "g", "f", "e", "d", "c", "b", "a", " "};
+    private  final int BOARD_SIZE_IN_SQUARES = 10;
+    private  final int SQUARE_SIZE_IN_CHARS = 1;
+    private  final int LINE_WIDTH_IN_CHARS = 1;
+    private  String[]headers;
 
-    private static String[]rowVals = {"1", "2","3","4", "5", "6", "7", "8"};
+    private  String[]rowVals;
 
-    private static List<String[]> chessBoard = new ArrayList<>();
+    private  List<String[]> chessBoard = new ArrayList<>();
+    private String boardColor;
 
-    public static void main(String[] args, String color) {
+    public  void draw(String args, String color) {
+        boardColor = color;
         chessBoard = new ArrayList<>();
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-        args = new String[]{"R,N,B,K,Q,B,N,R;P,P,P,P,P,P,P,P; , , , , , , , ; , , , , , , , ; , , , , , , , ; , , , , , , , ;p,p,p,p,p,p,p,p;r,n,b,q,k,b,n,r;"};
-        String[] rows = args[0].split(";");
+        ChessBoard board = new ChessBoard();
+        board.resetBoard();
+        args = board.toString();
+//        args = new String[]{"R,N,B,Q,K,B,N,R;P,P,P,P,P,P,P,P; , , , , , , , ; , , , , , , , ; , , , , , , , ; , , , , , , , ;p,p,p,p,p,p,p,p;r,n,b,q,k,b,n,r;"};
+        String[] rows = args.split(";");
         for (String row : rows) {
             String[] rowList = row.split(",");
+            if (color == "BLACK"){
+                List<String> list = Arrays.asList(rowList);
+                Collections.reverse(list);
+                list.toArray(rowList);
+                chessBoard.add(rowList);
+            } else {
             chessBoard.add(rowList);
+            }
         }
-
-
+        headers  = new String[]{" ", "a", "b", "c", "d", "e", "f", "g", "h", " "};
+        rowVals = new String[]{"8", "7","6","5", "4", "3", "2", "1"};
 
         if (Objects.equals(color, "BLACK")) {
                 List<String> list = Arrays.asList(headers);
@@ -36,8 +52,10 @@ public class ChessBoardDisplay {
                 list = Arrays.asList(rowVals);
                 Collections.reverse(list);
                 rowVals = list.toArray(new String[list.size()]);
+                List<String[]> oldBoard = chessBoard;
                 chessBoard = chessBoard.reversed();
             }
+
             out.print(ERASE_SCREEN);
             drawHeaders(out);
             drawChessBoard(out);
@@ -48,7 +66,7 @@ public class ChessBoardDisplay {
             out.print(SET_TEXT_COLOR_WHITE);
         }
 
-    private static void drawHeaders(PrintStream out){
+    private  void drawHeaders(PrintStream out){
         setGray(out);
 
 
@@ -61,7 +79,7 @@ public class ChessBoardDisplay {
         setGray(out);
     }
 
-    private static void drawHeader(PrintStream out, String header) {
+    private  void drawHeader(PrintStream out, String header) {
         int prefixLength = SQUARE_SIZE_IN_CHARS;
         int suffixLength = SQUARE_SIZE_IN_CHARS;
 
@@ -71,11 +89,11 @@ public class ChessBoardDisplay {
     }
 
 
-    private static void printText(PrintStream out, String text) {
+    private  void printText(PrintStream out, String text) {
         out.print(text);
     }
 
-    private static void drawChessBoard(PrintStream out) {
+    private  void drawChessBoard(PrintStream out) {
         for (int boardRow = 0; boardRow < chessBoard.size(); ++boardRow){
             drawSide(out, boardRow);
             setBlack(out);
@@ -91,34 +109,34 @@ public class ChessBoardDisplay {
         }
     }
 
-    private static void drawSide(PrintStream out, int boardRow) {
+    private  void drawSide(PrintStream out, int boardRow) {
         out.print(PRE_SPACE);
         out.print(rowVals[boardRow]);
         out.print(POST_SPACE);
     }
 
-    private static void drawRow(PrintStream out, int boardRow){
+    private  void drawRow(PrintStream out, int boardRow){
         for (int col = 0; col < chessBoard.size(); ++col){
-            if (boardRow % 2 == 1 ) {
-                if (col % 2 == 1){
-                    setWhite(out);
+                if (boardRow % 2 == 1) {
+                    if (col % 2 == 1) {
+                        setWhite(out);
+                    } else {
+                        setBlack(out);
+                    }
                 } else {
-                    setBlack(out);
+                    if (col % 2 == 1) {
+                        setBlack(out);
+                    } else {
+                        setWhite(out);
+                    }
                 }
-            } else {
-                if (col % 2 == 1){
-                    setBlack(out);
-                } else {
-                    setWhite(out);
-                }
-            }
             String chessPiece = getChessUnicode(chessBoard.get(boardRow)[col]);
             printText(out, chessPiece);
         }
         setGray(out);
     }
 
-    private static String getChessUnicode(String piece) {
+    private  String getChessUnicode(String piece) {
 
 
         switch (piece) {
@@ -144,15 +162,15 @@ public class ChessBoardDisplay {
         return EMPTY.repeat(1);
     }
 
-    private static void setGray(PrintStream out) {
+    private  void setGray(PrintStream out) {
         out.print(SET_BG_COLOR_LIGHT_GREY);
         out.print(SET_TEXT_COLOR_BLACK);
     }
-    private static void setBlack(PrintStream out) {
+    private  void setBlack(PrintStream out) {
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
     }
-    private static void setWhite(PrintStream out) {
+    private  void setWhite(PrintStream out) {
         out.print(SET_BG_COLOR_WHITE);
         out.print(SET_TEXT_COLOR_BLACK);
     }

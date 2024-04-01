@@ -38,16 +38,20 @@ public class ChessBoard {
         StringBuilder boardString = new StringBuilder();
         for (int i = 7; i >= 0; i--){
             ChessPiece[] row = this.board[i];
+            int col = 0;
             for (ChessPiece piece: row){
-                boardString.append("|");
+                if (col != 0) {
+                    boardString.append(",");
+                }
                 if (piece != null) {
                     boardString.append(piece);
                 }
                 else {
                     boardString.append(" ");
                 }
+                col ++;
             }
-            boardString.append("|\n");
+            boardString.append(";");
         }
         return boardString.toString();
     }

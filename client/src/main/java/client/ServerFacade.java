@@ -126,8 +126,12 @@ public class ServerFacade {
         curlArgs = new String[]{"PUT", auth, URL + "game", body.toString()};
         Map resp = ClientCurl.makeReq(curlArgs);
         assert resp != null;
-        ChessBoardDisplay.main((String[]) resp.get("gameBoard"), "WHITE");
-        ChessBoardDisplay.main((String[]) resp.get("gameBoard"), "BLACK");
+        System.out.println("BLACK");
+        ChessBoardDisplay display = new ChessBoardDisplay();
+        display.draw((String) resp.get("gameBoard"), "BLACK");
+        System.out.println("WHITE");
+        display.draw((String) resp.get("gameBoard"), "WHITE");
+
     }
 
     public  void listGames() {
