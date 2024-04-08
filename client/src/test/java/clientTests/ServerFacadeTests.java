@@ -1,5 +1,5 @@
 package clientTests;
-import client.ServerFacade;
+import client.ChessClient;
 import clientResources.DataChecks;
 import org.junit.jupiter.api.*;
 import server.Server;
@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ServerFacadeTests {
-    static ServerFacade facade;
+    static ChessClient facade;
     private static Server server;
     private static int portString = 0;
 
@@ -20,7 +20,7 @@ public class ServerFacadeTests {
         server = new Server();
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
-        facade = new ServerFacade(port, "http://localhost:");
+        facade = new ChessClient(port, "http://localhost:");
         portString = port;
     }
 

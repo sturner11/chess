@@ -2,77 +2,69 @@ package client;
 
 import client.websocket.WebSocketFacade;
 import dataAccess.DataAccessException;
-import ui.ChessBoardDisplay;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
 
-public class ServerFacade {
+public class ChessClient {
     private final String URL;
     private  String auth;
     private  String[] curlArgs;
     private  boolean loggedIn = false;
 
-    public ServerFacade(int port, String serverUrl) {
+    public ChessClient(int port, String serverUrl) {
         URL = serverUrl + port +"/";
 
     }
 
-    public  void run(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        String line = null;
-        String command = null;
-
-        while (!Objects.equals(command, "quit")) {
-            line = scanner.nextLine();
-            var userArgs = line.split(" ");
-            command = userArgs[0];
-            if (!loggedIn) {
-                switch (command) {
-                    case "help":
-                        help();
-                        break;
-                    case "register":
-                        user(userArgs);
-                        break;
-                    case "login":
-                        login(userArgs);
-                        break;
-                    case "quit":
-                        break;
-                    default:
-                        System.out.println("Command not recognized, please authenticate or try again");
-                }
-            } else {
-                switch (userArgs[0]) {
-                    case "help":
-                        help();
-                        break;
-                    case "create":
-                        createGame(userArgs);
-                        break;
-                    case "list":
-                        listGames();
-                        break;
-                    case "join":
-                        joinGame(userArgs);
-                        break;
-                    case "observe":
-                        observeGame(userArgs);
-                        break;
-                    case "logout":
-                        logout();
-                        break;
-                    case "quit":
-                        break;
-                    default:
-                        System.out.println("Command not recognized, please try again");
-
-                }
+    public  void eval(String line) {
+        var userArgs = line.split(" ");
+        var command = userArgs[0];
+        if (!loggedIn) {
+            switch (command) {
+                case "help":
+                    help();
+                    break;
+                case "register":
+                    user(userArgs);
+                    break;
+                case "login":
+                    login(userArgs);
+                    break;
+                case "quit":
+                    break;
+                default:
+                    System.out.println("Command not recognized, please authenticate or try again");
             }
-            System.out.println();
+        } else {
+            switch (userArgs[0]) {
+                case "help":
+                    help();
+                    break;
+                case "create":
+                    createGame(userArgs);
+                    break;
+                case "list":
+                    listGames();
+                    break;
+                case "join":
+                    joinGame(userArgs);
+                    break;
+                case "observe":
+                    observeGame(userArgs);
+                    break;
+                case "logout":
+                    logout();
+                    break;
+                case "quit":
+                    break;
+                default:
+                    System.out.println("Command not recognized, please try again");
+
+            }
         }
+        System.out.println();
     }
 
       public void logout() {
