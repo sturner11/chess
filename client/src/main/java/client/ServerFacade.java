@@ -1,5 +1,6 @@
 package client;
 
+import client.websocket.WebSocketFacade;
 import dataAccess.DataAccessException;
 import ui.ChessBoardDisplay;
 
@@ -126,11 +127,13 @@ public class ServerFacade {
         curlArgs = new String[]{"PUT", auth, URL + "game", body.toString()};
         Map resp = ClientCurl.makeReq(curlArgs);
         assert resp != null;
-        System.out.println("BLACK");
-        ChessBoardDisplay display = new ChessBoardDisplay();
-        display.draw((String) resp.get("gameBoard"), "BLACK");
-        System.out.println("WHITE");
-        display.draw((String) resp.get("gameBoard"), "WHITE");
+        WebSocketFacade.main(new String[] {}); // COLOR; Auth token
+        // TODO detemine where I display the board I think it is in WebSocektFacade
+//        System.out.println("BLACK");
+//        ChessBoardDisplay display = new ChessBoardDisplay();
+//        display.draw((String) resp.get("gameBoard"), "BLACK");
+//        System.out.println("WHITE");
+//        display.draw((String) resp.get("gameBoard"), "WHITE");
 
     }
 
