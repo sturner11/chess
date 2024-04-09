@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dataAccess.DataAccessException;
 import models.*;
+import server.websocket.WebSocketHandler;
 import services.GameService;
 import services.UserService;
 import spark.*;
@@ -16,6 +17,7 @@ import java.util.UUID;
 public class Server {
     UserService userService;
     GameService gameService;
+    private final WebSocketHandler webSocketHandler;
 
 
     public Server()  {
@@ -40,6 +42,10 @@ public class Server {
         Spark.post("/game", this::createGame);
         Spark.put("/game", this::joinGame);
         Spark.get("/game", this::listGame);
+        Spark.webSocket("/connect", webSocketHandler); // THis will take gamecommand and have the switch cases TODO: Return here and build out Handler
+
+
+
         Spark.awaitInitialization();
         return Spark.port();
     }
