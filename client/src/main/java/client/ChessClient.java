@@ -13,6 +13,8 @@ public class ChessClient {
     private  String[] curlArgs;
     private  boolean loggedIn = false;
 
+    private WebSocketFacade ws;
+
     public ChessClient(int port, String serverUrl) {
         URL = serverUrl + port +"/";
 
@@ -119,7 +121,8 @@ public class ChessClient {
         curlArgs = new String[]{"PUT", auth, URL + "game", body.toString()};
         Map resp = ClientCurl.makeReq(curlArgs);
         assert resp != null;
-        WebSocketFacade.main(new String[] {}); // COLOR; Auth token
+        ws = new WebSocketFacade(URL);
+        ws.joinPlayer(body.get("gameID"), body.get("playerColor"), auth);
         // TODO detemine where I display the board I think it is in WebSocektFacade
 //        System.out.println("BLACK");
 //        ChessBoardDisplay display = new ChessBoardDisplay();
