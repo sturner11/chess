@@ -2,10 +2,9 @@ package client.websocket;
 
 import chess.ChessMove;
 import com.google.gson.Gson;
-import webSocketMessages.Action;
+//import webSocketMessages.userCommands.JoinPlayerCommand;
 import webSocketMessages.userCommands.UserGameCommand;
 
-import javax.management.Notification;
 import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
@@ -18,16 +17,18 @@ public class WebSocketFacade extends Endpoint {
     Session session;
     NotificationHandler notificationHandler;
 
-    public WebSocketFacade(String url) {
+    public WebSocketFacade(String url, NotificationHandler notificationHandler) {
         try {
             url = url.replace("http", "ws");
-            URI socketURI = new URI(url + "/connect");
+            URI socketURI = new URI(url + "connect");
+            this.notificationHandler = notificationHandler;
+
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
-            this.session = (Session) container.connectToServer(this, socketURI);
+            this.session = container.connectToServer(this, socketURI);
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String s) {
-                    Notification notification = new Gson().fromJson(s, Notification.class);
+                    webSocketMessages.Notification notification = new Gson().fromJson(s, webSocketMessages.Notification.class);
                     notificationHandler.notify(notification);
                 }
             });
@@ -51,9 +52,9 @@ public class WebSocketFacade extends Endpoint {
 
     public void resign (Integer gameID) {}
 
-    public void joinPlayer(String gameID, String playerColor, String auth) throws IOException {
+    public void joinPlayer(String gameID,  String username, String playerColor, String auth) throws IOException {
         try {
-        var action = new UserGameCommand(auth);
+        var action = new UserGameCommand(auth, username, playerColor);
         action.setCommandType(JOIN_PLAYER);
         this.session.getBasicRemote().sendText(new Gson().toJson(action));
         } catch (IOException ex) {

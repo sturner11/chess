@@ -1,5 +1,6 @@
 package client;
 
+import client.websocket.NotificationHandler;
 import client.websocket.WebSocketFacade;
 import dataAccess.DataAccessException;
 
@@ -13,9 +14,13 @@ public class ChessClient {
     private  String[] curlArgs;
     private  boolean loggedIn = false;
 
-    private WebSocketFacade ws;
+    private String username;
 
-    public ChessClient(int port, String serverUrl) {
+    private WebSocketFacade ws;
+    private NotificationHandler notificationHandler;
+
+    public ChessClient(int port, String serverUrl, NotificationHandler notificationHandler) {
+        this.notificationHandler = notificationHandler;
         URL = serverUrl + port +"/";
 
     }
@@ -121,9 +126,10 @@ public class ChessClient {
         curlArgs = new String[]{"PUT", auth, URL + "game", body.toString()};
         Map resp = ClientCurl.makeReq(curlArgs);
         assert resp != null;
-        ws = new WebSocketFacade(URL);
-        ws.joinPlayer(body.get("gameID"), body.get("playerColor"), auth);
-        // TODO detemine where I display the board I think it is in WebSocektFacade
+        ws = new WebSocketFacade(URL, notificationHandler);
+        ws.joinPlayer(body.get("gameID"), username, body.get("playerColor"), auth);
+
+        // TODO detemine where I display the board I think it is in WebSocketFacade
 //        System.out.println("BLACK");
 //        ChessBoardDisplay display = new ChessBoardDisplay();
 //        display.draw((String) resp.get("gameBoard"), "BLACK");
@@ -175,9 +181,10 @@ public class ChessClient {
             try {
                 Map resp = ClientCurl.makeReq(curlArgs);
                 assert resp != null;
-                System.out.println("User ogged in! Please type help to continue");
+                System.out.println("User logged in! Please type help to continue");
                 auth = (String) resp.get("authToken");
                 loggedIn = true;
+                this.username = body.get("username");
             } catch (Exception e) {
                 System.out.println("User login failed. Please try again.");
             }
@@ -196,6 +203,7 @@ public class ChessClient {
                 assert resp != null;
                 auth = (String) resp.get("authToken");
                 loggedIn = true;
+                username = body.get("username");
             } catch (Exception e) {
                 System.out.println("Unable to register User, please try again");
             }

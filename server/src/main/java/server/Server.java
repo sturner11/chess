@@ -21,6 +21,7 @@ public class Server {
 
 
     public Server()  {
+        webSocketHandler = new WebSocketHandler();
         try {
             this.userService = new UserService();
             this.gameService = new GameService();
@@ -34,6 +35,9 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
+        Spark.webSocket("/connect", webSocketHandler); // THis will take gamecommand and have the switch cases TODO: Return here and build out Handler
+
+
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", this::clear);
         Spark.post("/user", this::register);
@@ -42,7 +46,6 @@ public class Server {
         Spark.post("/game", this::createGame);
         Spark.put("/game", this::joinGame);
         Spark.get("/game", this::listGame);
-        Spark.webSocket("/connect", webSocketHandler); // THis will take gamecommand and have the switch cases TODO: Return here and build out Handler
 
 
 

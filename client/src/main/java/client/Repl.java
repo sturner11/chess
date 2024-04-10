@@ -1,20 +1,25 @@
 package client;
 
+import client.websocket.NotificationHandler;
 import client.websocket.WebSocketFacade;
+import webSocketMessages.Notification;
 
 import java.util.Objects;
 import java.util.Scanner;
 
-public class Repl {
+import static java.awt.Color.GREEN;
+import static java.awt.Color.RED;
+import static org.glassfish.grizzly.Interceptor.RESET;
+
+public class Repl implements NotificationHandler {
 
     private final ChessClient client;
 
     public Repl(String serverUrl) {
-        client = new ChessClient(8080, serverUrl);
+        client = new ChessClient(8080, serverUrl, this);
     }
 
     public void run() {
-        System.out.println("♕ 240 Chess Client: Please Enter a command or type help to get started");
         Scanner scanner = new Scanner(System.in);
         String line;
         String command = null;
@@ -33,4 +38,13 @@ public class Repl {
         System.out.println();
     }
 
+    @Override
+    public void notify(Notification notification) {
+        System.out.println(RED + notification.message());
+        printPrompt();
+    }
+
+    private void printPrompt() {
+        System.out.print("\n" + RESET + ">>> " + GREEN);
+    }
 }
