@@ -122,7 +122,7 @@ public class ChessClient {
         }    
     }
 
-    public  void viewGame(Map<String, String> body) throws URISyntaxException, IOException, DataAccessException {
+    public void viewGame(Map<String, String> body) throws URISyntaxException, IOException, DataAccessException {
         curlArgs = new String[]{"PUT", auth, URL + "game", body.toString()};
         Map resp = ClientCurl.makeReq(curlArgs);
         assert resp != null;

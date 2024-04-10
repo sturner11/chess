@@ -7,8 +7,6 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import webSocketMessages.Notification;
-//import webSocketMessages.userCommands.JoinPlayerCommand;
-//import webSocketMessages.userCommands.MakeMoveCommmand;
 import webSocketMessages.userCommands.UserGameCommand;
 
 import java.io.IOException;
@@ -40,4 +38,6 @@ public class WebSocketHandler {
         var notification = new Notification(Notification.Type.MOVE, message);
         connections.broadcast(username, notification);
     }
+
+//    private String getChessBoard
 }

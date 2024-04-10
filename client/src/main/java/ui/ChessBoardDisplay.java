@@ -12,25 +12,25 @@ import static ui.EscapeSequences.*;
 
 public class ChessBoardDisplay {
 
-    private  final int BOARD_SIZE_IN_SQUARES = 10;
-    private  final int SQUARE_SIZE_IN_CHARS = 1;
+    private static final int BOARD_SIZE_IN_SQUARES = 10;
+    private static final int SQUARE_SIZE_IN_CHARS = 1;
     private  final int LINE_WIDTH_IN_CHARS = 1;
-    private  String[]headers;
+    private static String[]headers;
 
-    private  String[]rowVals;
+    private static String[]rowVals;
 
-    private  List<String[]> chessBoard = new ArrayList<>();
-    private String boardColor;
+    private static List<String[]> chessBoard = new ArrayList<>();
+    private static String boardColor;
 
-    public  void draw(String args, String color) {
+    public static void draw(String board, String color) {
         boardColor = color;
         chessBoard = new ArrayList<>();
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-        ChessBoard board = new ChessBoard();
-        board.resetBoard();
-        args = board.toString();
+//        ChessBoard board = new ChessBoard();
+//        board.resetBoard();
+//        board = board.toString();
 //        args = new String[]{"R,N,B,Q,K,B,N,R;P,P,P,P,P,P,P,P; , , , , , , , ; , , , , , , , ; , , , , , , , ; , , , , , , , ;p,p,p,p,p,p,p,p;r,n,b,q,k,b,n,r;"};
-        String[] rows = args.split(";");
+        String[] rows = board.split(";");
         for (String row : rows) {
             String[] rowList = row.split(",");
             if (color == "BLACK"){
@@ -66,7 +66,7 @@ public class ChessBoardDisplay {
             out.print(SET_TEXT_COLOR_WHITE);
         }
 
-    private  void drawHeaders(PrintStream out){
+    private static void drawHeaders(PrintStream out){
         setGray(out);
 
 
@@ -79,7 +79,7 @@ public class ChessBoardDisplay {
         setGray(out);
     }
 
-    private  void drawHeader(PrintStream out, String header) {
+    private static void drawHeader(PrintStream out, String header) {
         int prefixLength = SQUARE_SIZE_IN_CHARS;
         int suffixLength = SQUARE_SIZE_IN_CHARS;
 
@@ -89,11 +89,11 @@ public class ChessBoardDisplay {
     }
 
 
-    private  void printText(PrintStream out, String text) {
+    private static void printText(PrintStream out, String text) {
         out.print(text);
     }
 
-    private  void drawChessBoard(PrintStream out) {
+    private static void drawChessBoard(PrintStream out) {
         for (int boardRow = 0; boardRow < chessBoard.size(); ++boardRow){
             drawSide(out, boardRow);
             setBlack(out);
@@ -109,13 +109,13 @@ public class ChessBoardDisplay {
         }
     }
 
-    private  void drawSide(PrintStream out, int boardRow) {
+    private static void drawSide(PrintStream out, int boardRow) {
         out.print(PRE_SPACE);
         out.print(rowVals[boardRow]);
         out.print(POST_SPACE);
     }
 
-    private  void drawRow(PrintStream out, int boardRow){
+    private static void drawRow(PrintStream out, int boardRow){
         for (int col = 0; col < chessBoard.size(); ++col){
                 if (boardRow % 2 == 1) {
                     if (col % 2 == 1) {
@@ -136,7 +136,7 @@ public class ChessBoardDisplay {
         setGray(out);
     }
 
-    private  String getChessUnicode(String piece) {
+    private static String getChessUnicode(String piece) {
 
 
         switch (piece) {
@@ -162,15 +162,15 @@ public class ChessBoardDisplay {
         return EMPTY.repeat(1);
     }
 
-    private  void setGray(PrintStream out) {
+    private static void setGray(PrintStream out) {
         out.print(SET_BG_COLOR_LIGHT_GREY);
         out.print(SET_TEXT_COLOR_BLACK);
     }
-    private  void setBlack(PrintStream out) {
+    private static void setBlack(PrintStream out) {
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
     }
-    private  void setWhite(PrintStream out) {
+    private static void setWhite(PrintStream out) {
         out.print(SET_BG_COLOR_WHITE);
         out.print(SET_TEXT_COLOR_BLACK);
     }

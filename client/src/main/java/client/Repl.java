@@ -2,7 +2,10 @@ package client;
 
 import client.websocket.NotificationHandler;
 import client.websocket.WebSocketFacade;
+import com.google.gson.Gson;
+import ui.ChessBoardDisplay;
 import webSocketMessages.Notification;
+import webSocketMessages.userCommands.UserGameCommand;
 
 import java.util.Objects;
 import java.util.Scanner;
@@ -40,7 +43,9 @@ public class Repl implements NotificationHandler {
 
     @Override
     public void notify(Notification notification) {
-        System.out.println(RED + notification.message());
+        ChessData data = new Gson().fromJson(notification.message(), ChessData.class);
+        ChessBoardDisplay.draw(data.chessBoard(), data.playerColor());
+        System.out.println(RED + data.outputMessage());
         printPrompt();
     }
 
