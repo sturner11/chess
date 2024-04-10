@@ -12,7 +12,6 @@ import spark.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.UUID;
 
 public class Server {
     UserService userService;
@@ -35,7 +34,7 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
-        Spark.webSocket("/connect", webSocketHandler); // THis will take gamecommand and have the switch cases TODO: Return here and build out Handler
+        Spark.webSocket("/connect", webSocketHandler); // THis will take gamecommand and have the switch cases
 
 
         // Register your endpoints and handle exceptions here.
@@ -46,11 +45,27 @@ public class Server {
         Spark.post("/game", this::createGame);
         Spark.put("/game", this::joinGame);
         Spark.get("/game", this::listGame);
+        Spark.put("/board", this::getBoard);
 
 
 
         Spark.awaitInitialization();
         return Spark.port();
+    }
+
+    private Object getBoard(Request request, Response response) {
+        try {
+            var body = new Gson().fromJson(request.body(), GameBody.class);
+            var userName = userService.checkAuth(request.headers("Authorization"));
+            String gameBoard = gameService.getBoard(request.headers("Authorization"), body.playerColor(), body.gameID());
+            response.status(200);
+            return new Gson().toJson(Map.of("gameBoard", gameBoard));
+        } catch(DataAccessException e){
+            response.status(e.getStatus());
+            return new Gson().toJson(new ErrorMessage(e.getMessage()));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private Object listGame(Request request, Response response) {

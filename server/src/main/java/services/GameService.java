@@ -6,7 +6,6 @@ import models.Game;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Map;
 
 public class GameService {
 
@@ -31,8 +30,14 @@ public class GameService {
         return gameDAO.listGames();
     }
 
+//    public
+
     public void clear() {
         gameDAO.clear();
+    }
+
+    public String getBoard(String authToken, String playerColor, Integer gameID) throws SQLException {
+        return gameDAO.getBoard(authToken, playerColor, gameID);
     }
 }
 

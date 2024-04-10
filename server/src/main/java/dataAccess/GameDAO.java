@@ -1,5 +1,6 @@
 package dataAccess;
 
+import chess.ChessBoard;
 import models.Game;
 
 import java.sql.SQLException;
@@ -36,11 +37,15 @@ public class GameDAO implements DAO{
             configureDatabase();
             isInitialized = true;
         }
-        String sql ="INSERT INTO games (gameId, gameName) VALUES (NULL, ?)";
+        ChessBoard board = new ChessBoard();
+        board.resetBoard();
+        String boardString = board.toString();
+        String sql ="INSERT INTO games (gameId, gameName, gameBoard) VALUES (NULL, ?, ?)";
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement
                     (sql); ) {
                 preparedStatement.setString(1, gameName);
+                preparedStatement.setString(2, boardString);
                 var rs = preparedStatement.executeUpdate();
                 if (rs != 1){
                     throw new SQLException("Game creation failed");
@@ -168,4 +173,19 @@ public class GameDAO implements DAO{
     }
 
 
+    public String getBoard(String authToken, String playerColor, Integer gameID) throws SQLException {
+        if (!isInitialized){
+            throw new SQLException("Game Doesn't Exist");
+        }
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement
+                    ("SELECT gameBoard FROM games WHERE gameId = " + "'" + gameID + "'")) {
+                var rs = preparedStatement.executeQuery();
+                rs.next();
+                return rs.getString("gameBoard");
+            }
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
