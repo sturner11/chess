@@ -4,7 +4,6 @@ import chess.ChessGame;
 import client.websocket.NotificationHandler;
 import client.websocket.WebSocketFacade;
 import com.google.gson.Gson;
-import dataAccess.DataAccessException;
 import ui.ChessBoardDisplay;
 
 import java.io.IOException;
@@ -12,7 +11,7 @@ import java.net.URISyntaxException;
 import java.util.*;
 
 import static java.awt.Color.GREEN;
-import static java.awt.Color.RED;
+
 import static org.glassfish.grizzly.Interceptor.RESET;
 
 public class ChessClient {
@@ -21,12 +20,11 @@ public class ChessClient {
     private  String[] curlArgs;
     private  boolean loggedIn = false;
 
-    private String username;
 
     private String playerColor;
 
     private WebSocketFacade ws;
-    private NotificationHandler notificationHandler;
+    private final NotificationHandler notificationHandler;
     private boolean chessUI = false;
     private String gameID;
 
@@ -173,7 +171,7 @@ public class ChessClient {
         if ( body != null && !body.isEmpty()){
             try {
                 viewGame(body);
-            } catch (DataAccessException | URISyntaxException | IOException e) {
+            } catch ( URISyntaxException | IOException e) {
             System.out.println("Could not observe game. Please try again.");
             }
         } else {
@@ -181,7 +179,7 @@ public class ChessClient {
         }    
     }
 
-    public void viewGame(Map<String, String> body) throws URISyntaxException, IOException, DataAccessException {
+    public void viewGame(Map<String, String> body) throws URISyntaxException, IOException {
         curlArgs = new String[]{"PUT", auth, URL + "game", body.toString()};
         Map resp = ClientCurl.makeReq(curlArgs);
         assert resp != null;
@@ -210,7 +208,6 @@ public class ChessClient {
             System.out.println("Games:");
             for (int i = 0; i < games.size(); ++i){
                 Map<String, Object> game = games.get(i);
-                double gameID = (double) game.get("gameID");
                 System.out.print(i+1);
                 String white = game.get("whiteUsername") != null ? (String) game.get("whiteUsername") : "AVAILABLE";
                 String black = game.get("blackUsername") != null ? (String) game.get("blackUsername") : "AVAILABLE";
@@ -247,31 +244,12 @@ public class ChessClient {
                 System.out.println("User logged in! Please type help to continue");
                 auth = (String) resp.get("authToken");
                 loggedIn = true;
-                this.username = body.get("username");
             } catch (Exception e) {
                 System.out.println("User login failed. Please try again.");
             }
         } else {
             System.out.println("Please enter the correct amount of arguments for command: " + userArgs[0]);
         }
-    }
-
-    public String getBoard(String[] userArgs) {
-        userArgs[2] = playerColor; //override old player color ar
-        Map<String, String> body = createBody(userArgs, new String[] {"gameID", "playerColor"});
-        if ( body != null && !body.isEmpty()){
-            try {
-                curlArgs = new String[]{"PUT", auth, URL + "board", body.toString()};
-                Map resp = ClientCurl.makeReq(curlArgs);
-                assert resp != null;
-                return (String) resp.get("gameBoard");
-            } catch (Exception e) {
-                System.out.println("Could not join game. Please try again");
-            }
-        } else {
-            System.out.println("Please enter the correct amount of arguments for command: " + userArgs[0]);
-        }
-        return null;
     }
 
     public void user( String[] userArgs) {
@@ -284,7 +262,6 @@ public class ChessClient {
                 assert resp != null;
                 auth = (String) resp.get("authToken");
                 loggedIn = true;
-                username = body.get("username");
             } catch (Exception e) {
                 System.out.println("Unable to register User, please try again");
             }
@@ -322,15 +299,6 @@ public class ChessClient {
                         """;
         }
         System.out.print(help);
-    }
-
-    public String getAuth(){
-        return this.auth;
-    }
-
-    public void clearAuth() {
-        auth = null;
-        loggedIn = false;
     }
 
     public void setChessGame( String game) {
