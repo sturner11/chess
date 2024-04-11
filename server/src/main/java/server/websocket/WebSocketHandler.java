@@ -106,13 +106,12 @@ public class WebSocketHandler {
             if (isValidMove(move, gameID, playerColor, game)) {
                 game.makeMove(move);
                 gameService.updateBoard(new Gson().toJson(game), gameID);
-                String message = username + " moves " + move.getStartPosition().toString() + " to " + move.getEndPosition().toString();
+                String message = username + " moves " + move.getStartPosition().getRow() + "," + move.getStartPosition().getColumn() + " to " + move.getEndPosition().getRow() + "," + move.getEndPosition().getColumn();
                 String gameString =  gameService.getBoard(Integer.parseInt(gameID));
-//                var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, game, message, playerColor);
-
                 var loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameString, message, playerColor);
                 connections.sendAll(loadGame, gameID);
-                var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message,  gameString);
+//                var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, gameID, message);
+                var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, gameID,  message);
                 connections.broadcast(username, notification, gameID);
             } else {
                 throw new Exception();

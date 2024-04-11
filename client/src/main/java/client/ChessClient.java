@@ -112,6 +112,7 @@ public class ChessClient {
     }
 
     private void move(String[] userArgs) {
+        System.out.println(playerColor);
         if (userArgs.length == 3) {
                 ws.makeMove(userArgs[1], userArgs[2], auth, gameID);
 
@@ -303,5 +304,9 @@ public class ChessClient {
 
     public void setChessGame( String game) {
         chessGameString = game;
+    }
+
+    public String getPlayerColor() {
+        return this.playerColor;
     }
 }
