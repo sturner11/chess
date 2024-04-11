@@ -20,20 +20,12 @@ public class ServerMessage {
     private String game;
     private String message;
 
-    public String getGame() {
-        return game;
-    }
-
-
 
     public ServerMessage(ServerMessageType type, String game) {
         this.serverMessageType = type;
         this.game = game;
     }
 
-    public String getMessage() {
-        return message;
-    }
 
     public ServerMessage(ServerMessageType type, String game, String message){
         this.serverMessageType = type;
@@ -44,6 +36,10 @@ public class ServerMessage {
     public ServerMessageType getServerMessageType() {
         return this.serverMessageType;
     }
+    public String getMessage() {return message; }
+    public String getGame() {return game; }
+
+
 
     @Override
     public boolean equals(Object o) {

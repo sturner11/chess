@@ -12,27 +12,25 @@ import java.util.Objects;
  */
 public class UserGameCommand {
 
-    private String desiredPosition;
-    private String piecePosition;
     private String playerColor;
-
-    public String getDesiredPosition() {
-        return desiredPosition;
-    }
-
-    public String getPiecePosition() {
-        return piecePosition;
-    }
-
-    public String getAuthToken() {
-        return authToken;
-    }
 
     private String username;
     private ChessMove move;
     private String gameID;
+    protected CommandType commandType;
 
-    public UserGameCommand(String authToken, String username, String playerColor) {
+    private final String authToken;
+
+
+    public enum CommandType {
+        JOIN_PLAYER,
+        JOIN_OBSERVER,
+        MAKE_MOVE,
+        LEAVE,
+        RESIGN
+    }
+
+    public UserGameCommand(String authToken) {
         this.authToken = authToken;
     }
 
@@ -41,11 +39,6 @@ public class UserGameCommand {
         this.username = username;
     }
 
-    public UserGameCommand(String authToken, String username, ChessMove move) {
-        this.authToken = authToken;
-        this.username = username;
-        this.move = move;
-    }
 
     public UserGameCommand(String authToken, String username, String playerColor, String gameID) {
         this.authToken = authToken;
@@ -58,24 +51,12 @@ public class UserGameCommand {
     public String getUsername() {
         return username;
     }
-
     public ChessMove getMove() {
         return this.move;
     }
-
     public String getGameID() { return this.gameID; }
+    public String getPlayerColor() { return playerColor; }
 
-    public enum CommandType {
-        JOIN_PLAYER,
-        JOIN_OBSERVER,
-        MAKE_MOVE,
-        LEAVE,
-        RESIGN
-    }
-
-    protected CommandType commandType;
-
-    private final String authToken;
 
     public String getAuthString() {
         return authToken;
@@ -89,7 +70,7 @@ public class UserGameCommand {
         this.commandType = commandType;
     }
 
-    public String getPlayerColor() { return playerColor; }
+
 
     @Override
     public boolean equals(Object o) {

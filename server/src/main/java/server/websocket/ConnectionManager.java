@@ -33,7 +33,7 @@ public class ConnectionManager {
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
                 if (!c.username.equals(excludeUsername)) {
-                c.send(new Gson().toJson(serverMessage));
+                    c.send(new Gson().toJson(serverMessage));
                 }
             } else {
                 removeList.add(c);
@@ -47,9 +47,9 @@ public class ConnectionManager {
     public void send(String username, ServerMessage serverMessage) throws IOException {
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
-            if (c.username.equals(username)) {
-                c.send(new Gson().toJson(serverMessage));
-            }
+                if (c.username.equals(username)) {
+                    c.send(new Gson().toJson(serverMessage));
+                }
             }
         }
     }

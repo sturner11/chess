@@ -39,12 +39,13 @@ public class WebSocketHandler {
             case JOIN_OBSERVER:
                 joinPlayer(session, command.getPlayerColor(), command.getGameID(), command.getAuthString(), true);
                 break;
-            case LEAVE:
-                leave(command.getUsername(), command.getGameID(), command.getPlayerColor());
-                break;
             case MAKE_MOVE:
                 MoveCommand move = new Gson().fromJson(message, MoveCommand.class);
                 move(command.getUsername(), command.getPiecePosition(), command.getDesiredPosition());
+            case LEAVE:
+                leave(command.getUsername(), command.getGameID(), command.getPlayerColor());
+                break;
+
         }
 
     }
