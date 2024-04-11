@@ -8,6 +8,7 @@ import java.util.*;
 
 import  ui.EscapeSequences.*;
 
+import static java.lang.System.out;
 import static ui.EscapeSequences.*;
 
 public class ChessBoardDisplay {
@@ -21,6 +22,12 @@ public class ChessBoardDisplay {
 
     private static List<String[]> chessBoard = new ArrayList<>();
     private static String boardColor;
+
+    private static String blackBG;
+
+    private static String blackT;
+    private static String whiteBG;
+    private static String whiteT;
 
     public static void draw(String board, String color) {
         boardColor = color;
@@ -39,6 +46,10 @@ public class ChessBoardDisplay {
                 list.toArray(rowList);
                 chessBoard.add(rowList);
             } else {
+                whiteBG = SET_BG_COLOR_WHITE;
+                whiteT = SET_TEXT_COLOR_BLACK;
+                blackBG = SET_BG_COLOR_BLACK;
+                blackT = SET_TEXT_COLOR_WHITE;
             chessBoard.add(rowList);
             }
         }
@@ -46,6 +57,10 @@ public class ChessBoardDisplay {
         rowVals = new String[]{"8", "7","6","5", "4", "3", "2", "1"};
 
         if (Objects.equals(color, "BLACK")) {
+            blackBG = SET_BG_COLOR_WHITE;
+            blackT = SET_TEXT_COLOR_BLACK;
+            whiteBG = SET_BG_COLOR_BLACK;
+            whiteT = SET_TEXT_COLOR_WHITE;
                 List<String> list = Arrays.asList(headers);
                 Collections.reverse(list);
                 headers = list.toArray(new String[list.size()]);
@@ -54,7 +69,12 @@ public class ChessBoardDisplay {
                 rowVals = list.toArray(new String[list.size()]);
                 List<String[]> oldBoard = chessBoard;
                 chessBoard = chessBoard.reversed();
-            }
+            } else {
+            whiteBG = SET_BG_COLOR_WHITE;
+            whiteT = SET_TEXT_COLOR_BLACK;
+            blackBG = SET_BG_COLOR_BLACK;
+            blackT = SET_TEXT_COLOR_WHITE;
+        }
 
             out.print(ERASE_SCREEN);
             drawHeaders(out);
@@ -74,7 +94,7 @@ public class ChessBoardDisplay {
         for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol){
             drawHeader(out, headers[boardCol]);
         }
-        setBlack(out);
+        setOuter();
         out.println();
         setGray(out);
     }
@@ -103,10 +123,15 @@ public class ChessBoardDisplay {
                 drawSide(out, boardRow);
                 setGray(out);
             }
-            setBlack(out);
+            setOuter();
             out.println();
             setGray(out);
         }
+    }
+
+    private static void setOuter() {
+        out.print(SET_BG_COLOR_BLACK);
+        out.print(SET_TEXT_COLOR_WHITE);
     }
 
     private static void drawSide(PrintStream out, int boardRow) {
@@ -167,11 +192,11 @@ public class ChessBoardDisplay {
         out.print(SET_TEXT_COLOR_BLACK);
     }
     private static void setBlack(PrintStream out) {
-        out.print(SET_BG_COLOR_BLACK);
-        out.print(SET_TEXT_COLOR_WHITE);
+        out.print(blackBG);
+        out.print(blackT);
     }
     private static void setWhite(PrintStream out) {
-        out.print(SET_BG_COLOR_WHITE);
-        out.print(SET_TEXT_COLOR_BLACK);
+        out.print(whiteBG);
+        out.print(whiteT);
     }
 }
