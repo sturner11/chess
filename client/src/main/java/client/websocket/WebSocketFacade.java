@@ -1,6 +1,5 @@
 package client.websocket;
 
-import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
@@ -15,8 +14,8 @@ import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.ByteBuffer;
 import java.util.HashMap;
+import java.util.Objects;
 
 import static webSocketMessages.userCommands.UserGameCommand.CommandType.*;
 
@@ -98,10 +97,10 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    public void makeMove(String piecePosition, String desiredPosition, String auth, String gameId) {
+    public void makeMove(String piecePosition, String desiredPosition, String auth, String gameId, String playerColor) {
         try {
-            Integer[] piecePositionInts = positionConverter(piecePosition);
-            Integer[] desiredPositionInts = positionConverter(desiredPosition);
+            Integer[] piecePositionInts = positionConverter(piecePosition, playerColor);
+            Integer[] desiredPositionInts = positionConverter(desiredPosition, playerColor);
             ChessPosition startPosition = new ChessPosition(piecePositionInts[0], piecePositionInts[1]);
             ChessPosition endPosition = new ChessPosition(desiredPositionInts[0], desiredPositionInts[1]);
 
@@ -114,13 +113,19 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    private Integer[] positionConverter(String piecePosition) {
+    private Integer[] positionConverter(String piecePosition, String playerColor) {
         HashMap<Character, Integer> letterNumberMap = new HashMap<>();
 
         // Loop through the first 10 letters (A-J) and add them to the map
         int count = 1;
+
         for (char ch = 'a'; ch <= 'h'; ch++) {
-            letterNumberMap.put(ch, count);
+            if (Objects.equals(playerColor, "BLACK"))
+            {
+                letterNumberMap.put(ch, 9 - count);
+            } else {
+                letterNumberMap.put(ch, count);
+            }
             count++;
         }
         return new Integer[]{Integer.parseInt(piecePosition.substring(1)), letterNumberMap.get(piecePosition.charAt(0))};

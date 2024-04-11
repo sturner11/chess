@@ -114,7 +114,7 @@ public class ChessClient {
     private void move(String[] userArgs) {
         System.out.println(playerColor);
         if (userArgs.length == 3) {
-                ws.makeMove(userArgs[1], userArgs[2], auth, gameID);
+                ws.makeMove(userArgs[1], userArgs[2], auth, gameID, playerColor);
 
         } else {
             System.out.println("Please enter the correct amount of arguments for command: " + userArgs[0]);
