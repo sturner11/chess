@@ -50,7 +50,7 @@ public class WebSocketHandler {
                     resign(session, command);
                     break;
                 case LEAVE:
-//                leave(command.getGameID(), command.getPlayerColor());
+                leave(session, command);
                     break;
             }
 
@@ -60,6 +60,7 @@ public class WebSocketHandler {
         }
 
     }
+
 
     private void resign(Session session, UserGameCommand command) throws IOException {
         try {
@@ -124,13 +125,19 @@ public class WebSocketHandler {
         return game.validMoves(move.getStartPosition(), ChessGame.TeamColor.valueOf(playerColor)).contains(move);
     }
 
-    private void leave(String username, String gameID, String playerColor) throws IOException {
-        var message = username + " has left the game";
+    private void leave(Session session, UserGameCommand command) throws Exception {
+        try {
+            getValidData(command.getAuthString(), command.getGameID());
+            var message = username + " has left the game";
 //        var notification = new Notification(Notification.Type.LEAVE, message, null, username, gameID);
-        var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message,  gameID);
-        connections.broadcast(username, notification);
-        connections.remove(username);
-        gameService.removeUser(gameID, playerColor);
+            var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message, command.getGameID());
+            connections.broadcast(username, notification);
+            connections.remove(username);
+            gameService.removeUser(command.getGameID(), command.getPlayerColor());
+        } catch (Exception e) {
+            var message = "Failed to leave. Please try again";
+            sendError(session, message);
+        }
     }
 
     private void getValidData(String auth, String gameID) throws Exception {
