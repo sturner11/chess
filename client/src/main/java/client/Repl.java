@@ -46,10 +46,6 @@ public class Repl implements NotificationHandler {
         try {
             System.out.println(RED + notification.message());
             client.gamePlayUI(notification.gameID(), notification.playerColor());
-//            String board = client.getBoard(new String[]{"getBoard", notification.gameID(), notification.playerColor()});
-//            ChessBoardDisplay.draw(board, notification.playerColor());
-
-//            printPrompt();
         } catch(Error e){
             System.out.println(e);
         }

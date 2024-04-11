@@ -12,7 +12,22 @@ import java.util.Objects;
  */
 public class UserGameCommand {
 
+    private String desiredPosition;
+    private String piecePosition;
     private String playerColor;
+
+    public String getDesiredPosition() {
+        return desiredPosition;
+    }
+
+    public String getPiecePosition() {
+        return piecePosition;
+    }
+
+    public String getAuthToken() {
+        return authToken;
+    }
+
     private String username;
     private ChessMove move;
     private String gameID;
@@ -38,6 +53,7 @@ public class UserGameCommand {
         this.playerColor = playerColor;
         this.gameID = gameID;
     }
+
 
     public String getUsername() {
         return username;

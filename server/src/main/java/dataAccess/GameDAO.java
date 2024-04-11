@@ -201,4 +201,17 @@ public class GameDAO implements DAO{
             throw new RuntimeException(e);
         }
     }
+
+    public String getUser(String gameID, String playerColor) {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement
+                    ("SELECT " + playerColor + " FROM games WHERE gameId = " + "'" + gameID + "'")) {
+                var rs = preparedStatement.executeQuery();
+                rs.next();
+                return rs.getString(playerColor);
+            }
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

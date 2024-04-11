@@ -52,10 +52,10 @@ public class ChessClient {
                     move(userArgs);
                     break;
                 case "resign":
-                    resign();
+//                    resign();
                     break;
                 case "highlight":
-                    highlight(userArgs);
+//                    highlight(userArgs);
                     break;
             }
 
@@ -106,7 +106,32 @@ public class ChessClient {
     }
 
     private void move(String[] userArgs) {
+        boolean moveSuccessful = false;
+        if (userArgs.length == 3) {
+            String[] bodyArgs = {userArgs[0], gameID, playerColor, userArgs[1], userArgs[2]};
+            Map<String, String> body = createBody(bodyArgs, new String[] {"gameID", "playerColor", "piecePosition", "desiredPosition"});
+            if ( body != null && !body.isEmpty()){
+                try {
+                    curlArgs = new String[]{"PUT", auth, URL + "move", body.toString()};
+                    ClientCurl.makeReq(curlArgs);
+                    System.out.println("Move successfully made.");
+                    moveSuccessful = true;
+                } catch (Exception e) {
+                    System.out.println("Invalid move. Make sure to enter a valid move or wait for your turn");
+                }
+            } else {
+                System.out.println("Please enter the correct amount of arguments for command: " + userArgs[0]);
+            }
 
+            // if good, notify other users via websocket
+            if (moveSuccessful) {
+                ws.makeMove(userArgs[1], userArgs[2], auth, username);
+            }
+        } else {
+            System.out.println("Please enter the correct amount of arguments for command: " + userArgs[0]);
+        }
+
+        // redraw chess board
     }
 
     private void leave() {

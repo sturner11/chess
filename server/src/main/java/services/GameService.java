@@ -43,5 +43,9 @@ public class GameService {
     public void removeUser(String gameID, String playerColor) {
         gameDAO.removeUser(gameID, playerColor);
     }
+
+    public String getUser(String gameID, String playerColor) {
+        return gameDAO.getUser(gameID, playerColor);
+    }
 }
 

@@ -3,6 +3,7 @@ package client.websocket;
 import chess.ChessMove;
 import com.google.gson.Gson;
 //import webSocketMessages.userCommands.JoinPlayerCommand;
+import webSocketMessages.userCommands.MoveCommand;
 import webSocketMessages.userCommands.UserGameCommand;
 
 import javax.websocket.*;
@@ -74,7 +75,15 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-
+    public void makeMove(String piecePosition, String desiredPosition, String auth, String username) {
+        try {
+            var action = new MoveCommand(auth, username, piecePosition, desiredPosition);
+            action.setCommandType(JOIN_PLAYER);
+            this.session.getBasicRemote().sendText(new Gson().toJson(action));
+        } catch (IOException ex) {
+//            throw new Exception(500, ex.getMessage()); TODO
+        }
+    }
 
 
 //    public static void main(String[] args) {

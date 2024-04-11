@@ -9,6 +9,7 @@ import services.GameService;
 import services.UserService;
 import spark.*;
 
+import javax.xml.crypto.Data;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Map;
@@ -16,11 +17,16 @@ import java.util.Map;
 public class Server {
     UserService userService;
     GameService gameService;
-    private final WebSocketHandler webSocketHandler;
+    private WebSocketHandler webSocketHandler;
 
 
     public Server()  {
-        webSocketHandler = new WebSocketHandler(gameService);
+        webSocketHandler = null;
+        try {
+            webSocketHandler = new WebSocketHandler();
+        } catch (DataAccessException e){
+            System.out.println(e);
+        }
         try {
             this.userService = new UserService();
             this.gameService = new GameService();
@@ -46,6 +52,7 @@ public class Server {
         Spark.put("/game", this::joinGame);
         Spark.get("/game", this::listGame);
         Spark.put("/board", this::getBoard);
+        Spark.put("/move", this::move);
 
 
 
@@ -53,10 +60,25 @@ public class Server {
         return Spark.port();
     }
 
+    private Object move(Request request, Response response) {
+        try {
+            var body = new Gson().fromJson(request.body(), GameBody.class);
+            userService.checkAuth(request.headers("Authorization"));
+            String gameBoard = gameService.getBoard(body.gameID());
+            response.status(200);
+            return new Gson().toJson(Map.of("gameBoard", gameBoard, "playerColor", body.playerColor() != null ? body.playerColor(): "WHITE", "gameID", body.gameID()));
+        } catch(DataAccessException e){
+            response.status(e.getStatus());
+            return new Gson().toJson(new ErrorMessage(e.getMessage()));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private Object getBoard(Request request, Response response) {
         try {
             var body = new Gson().fromJson(request.body(), GameBody.class);
-            var userName = userService.checkAuth(request.headers("Authorization"));
+            userService.checkAuth(request.headers("Authorization"));
             String gameBoard = gameService.getBoard(body.gameID());
             response.status(200);
             return new Gson().toJson(Map.of("gameBoard", gameBoard, "playerColor", body.playerColor() != null ? body.playerColor(): "WHITE", "gameID", body.gameID()));
@@ -70,7 +92,7 @@ public class Server {
 
     private Object listGame(Request request, Response response) {
         try {
-            var userName = userService.checkAuth(request.headers("Authorization"));
+            userService.checkAuth(request.headers("Authorization"));
             ArrayList<Game> games = gameService.listGames();
             response.status(200);
             return new Gson().toJson(Map.of("games",games));
@@ -86,7 +108,7 @@ public class Server {
         try {
             var body = new Gson().fromJson(request.body(), GameBody.class);
             var userName = userService.checkAuth(request.headers("Authorization"));
-            Game game = gameService.joinGame(request.headers("Authorization"), body.playerColor(), body.gameID(), userName);
+            gameService.joinGame(request.headers("Authorization"), body.playerColor(), body.gameID(), userName);
             response.status(200);
             return new Gson().toJson(Map.of("gameID", body.gameID()));
         } catch(DataAccessException e){
