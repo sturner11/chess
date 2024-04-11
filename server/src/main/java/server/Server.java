@@ -20,7 +20,7 @@ public class Server {
 
 
     public Server()  {
-        webSocketHandler = new WebSocketHandler();
+        webSocketHandler = new WebSocketHandler(gameService);
         try {
             this.userService = new UserService();
             this.gameService = new GameService();
@@ -57,7 +57,7 @@ public class Server {
         try {
             var body = new Gson().fromJson(request.body(), GameBody.class);
             var userName = userService.checkAuth(request.headers("Authorization"));
-            String gameBoard = gameService.getBoard(request.headers("Authorization"), body.playerColor(), body.gameID());
+            String gameBoard = gameService.getBoard(body.gameID());
             response.status(200);
             return new Gson().toJson(Map.of("gameBoard", gameBoard, "playerColor", body.playerColor() != null ? body.playerColor(): "WHITE", "gameID", body.gameID()));
         } catch(DataAccessException e){

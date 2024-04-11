@@ -113,7 +113,7 @@ public class ChessClient {
         playerColor = null;
         gameID = null;
         chessUI = false;
-        ws.leave(auth, username);
+        ws.leave(auth, username, playerColor, gameID);
     }
 
     public void logout() {

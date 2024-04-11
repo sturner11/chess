@@ -5,8 +5,6 @@ import models.Game;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import static dataAccess.DatabaseManager.configureDatabase;
 
@@ -173,7 +171,7 @@ public class GameDAO implements DAO{
     }
 
 
-    public String getBoard(String authToken, String playerColor, Integer gameID) throws SQLException {
+    public String getBoard(Integer gameID) throws SQLException {
         if (!isInitialized){
             throw new SQLException("Game Doesn't Exist");
         }
@@ -183,6 +181,21 @@ public class GameDAO implements DAO{
                 var rs = preparedStatement.executeQuery();
                 rs.next();
                 return rs.getString("gameBoard");
+            }
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void removeUser(String gameID, String playerColor) {
+        String sql = "UPDATE games SET " + playerColor + "=" + "'" + null + "'" + "WHERE gameId =   " + gameID;
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement
+                    (sql)) {
+                var rs = preparedStatement.executeUpdate();
+                if (rs != 1){
+                    throw new SQLException("User Removal failed");
+                }
             }
         } catch (SQLException | DataAccessException e) {
             throw new RuntimeException(e);

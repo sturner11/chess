@@ -36,8 +36,12 @@ public class GameService {
         gameDAO.clear();
     }
 
-    public String getBoard(String authToken, String playerColor, Integer gameID) throws SQLException {
-        return gameDAO.getBoard(authToken, playerColor, gameID);
+    public String getBoard(Integer gameID) throws SQLException {
+        return gameDAO.getBoard( gameID);
+    }
+
+    public void removeUser(String gameID, String playerColor) {
+        gameDAO.removeUser(gameID, playerColor);
     }
 }
 

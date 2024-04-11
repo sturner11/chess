@@ -6,12 +6,19 @@ import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import services.GameService;
 import webSocketMessages.Notification;
 import webSocketMessages.userCommands.UserGameCommand;
 
 import java.io.IOException;
 @WebSocket
 public class WebSocketHandler {
+    GameService gameService;
+
+    public WebSocketHandler(GameService gameService){
+        this.gameService = gameService;
+    }
+
     private final ConnectionManager connections = new ConnectionManager();
 
     @OnWebSocketMessage
@@ -21,9 +28,20 @@ public class WebSocketHandler {
             case JOIN_PLAYER:
                 join(command.getUsername(), session, command.getPlayerColor(), command.getGameID());
                 break;
+            case LEAVE:
+                leave(command.getUsername(), command.getGameID(), command.getPlayerColor());
+                break;
             case MAKE_MOVE:
                 move(command.getUsername(), command.getMove(), session, command.getPlayerColor(), command.getGameID());
         }
+    }
+
+    private void leave(String username, String gameID, String playerColor) throws IOException {
+        var message = username + " has left the game";
+        var notification = new Notification(Notification.Type.LEAVE, message, null, username, gameID);
+        connections.broadcast(username, notification);
+        connections.remove(username);
+        gameService.removeUser(gameID, playerColor);
     }
 
     private void join(String username, Session session, String playerColor, String gameID) throws IOException {
