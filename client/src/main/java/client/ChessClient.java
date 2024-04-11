@@ -217,7 +217,7 @@ public class ChessClient {
                 System.out.println(". GameName:" + game.get("gameName")+ " WHITE:" +
                 white + " BLACK:" + black);
             }
-        } catch (DataAccessException | URISyntaxException | IOException e) {
+        } catch (URISyntaxException | IOException e) {
             System.out.println("Could not list Game");
         }
     }
