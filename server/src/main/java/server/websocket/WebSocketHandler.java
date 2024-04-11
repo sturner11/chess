@@ -15,6 +15,8 @@ import webSocketMessages.userCommands.MoveCommand;
 import webSocketMessages.userCommands.UserGameCommand;
 
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Objects;
 
 @WebSocket
 public class WebSocketHandler {
@@ -32,10 +34,10 @@ public class WebSocketHandler {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
         switch (command.getCommandType()) {
             case JOIN_PLAYER:
-                joinPlayer(command.getUsername(), session, command.getPlayerColor(), command.getGameID(), command.getAuthString(), false);
+                joinPlayer(session, command.getPlayerColor(), command.getGameID(), command.getAuthString(), false);
                 break;
             case JOIN_OBSERVER:
-                joinPlayer(command.getUsername(), session, command.getPlayerColor(), command.getGameID(), command.getAuthString(), true);
+                joinPlayer(session, command.getPlayerColor(), command.getGameID(), command.getAuthString(), true);
                 break;
             case LEAVE:
                 leave(command.getUsername(), command.getGameID(), command.getPlayerColor());
@@ -47,6 +49,21 @@ public class WebSocketHandler {
 
     }
 
+    private void joinPlayer(Session session, String playerColor, String gameID, String auth, Boolean observer) throws IOException {
+        try {
+            getValidData(auth, observer, gameID, playerColor);
+            sendMessage(gameID, session, playerColor);
+        } catch (Exception e) {
+           sendError(session);
+        }
+    }
+
+    private void move(String username, String piecePosition, String desiredPosition) throws IOException {
+        var message = username + " moves " + piecePosition + " to " + desiredPosition;
+        var notification = new Notification(Notification.Type.MOVE, message);
+//        connections.broadcast(username, notification);
+    }
+
     private void leave(String username, String gameID, String playerColor) throws IOException {
         var message = username + " has left the game";
 //        var notification = new Notification(Notification.Type.LEAVE, message, null, username, gameID);
@@ -56,33 +73,36 @@ public class WebSocketHandler {
         gameService.removeUser(gameID, playerColor);
     }
 
-    private void joinPlayer(String username, Session session, String playerColor, String gameID, String auth, Boolean observer) throws IOException {
-        try {
-            if (username == null){
-                username = userService.getUser(auth);
-            }
-            if(!observer){
-                username = checkUser(username, gameID, playerColor);
-                if (username == "null") {throw new Exception();}
-            }
-            if (username == null) {
-                username = "null";
-                throw new Exception();
-            }
-            gameService.getGame(gameID);
-            connections.add(username, session);
-            var message = username + " has joined the game as " + (playerColor != null ? playerColor : "an observer");
-            var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameID, message);
-            connections.send(username, serverMessage);
-            var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, gameID, message);
-            connections.broadcast(username, notification);
-        } catch (Exception e) {
-            connections.add(username, session);
-            var message = "Could not join game";
-            var serverMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, null, message);
-            connections.send(username, serverMessage);
-            connections.remove(username);
+    private void getValidData(String auth, Boolean observer, String gameID, String playerColor) throws Exception {
+        username = userService.getUser(auth);
+        if (username == null) {
+            username = "null";
+            throw new Exception();
         }
+        if(!observer){
+            username = checkUser(username, gameID, playerColor);
+            if (Objects.equals(username, "null")) {throw new Exception();}
+        }
+        gameService.getGame(gameID);
+    }
+
+
+    private void sendMessage(String gameID, Session session, String playerColor) throws IOException, SQLException {
+
+        connections.add(username, session);
+        var message = username + " has joined the game as " + (playerColor != null ? playerColor : "an observer");
+        var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameID, message);
+        connections.send(username, serverMessage);
+        var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, gameID, message);
+        connections.broadcast(username, notification);
+    }
+
+    private void sendError(Session session) throws IOException {
+        connections.add(username, session);
+        var message = "Could not join game";
+        var serverMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, null, message);
+        connections.send(username, serverMessage);
+        connections.remove(username);
     }
 
     private String checkUser(String username, String gameID, String playerColor) throws Exception {
@@ -93,10 +113,5 @@ public class WebSocketHandler {
         return username;
     }
 
-    private void move(String username, String piecePosition, String desiredPosition) throws IOException {
-        var message = username + " moves " + piecePosition + " to " + desiredPosition;
-        var notification = new Notification(Notification.Type.MOVE, message);
-//        connections.broadcast(username, notification);
-    }
 
 }
