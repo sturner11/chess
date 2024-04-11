@@ -43,13 +43,17 @@ public class Repl implements NotificationHandler {
 
     @Override
     public void notify(Notification notification) {
-        ChessData data = new Gson().fromJson(notification.message(), ChessData.class);
-        ChessBoardDisplay.draw(data.chessBoard(), data.playerColor());
-        System.out.println(RED + data.outputMessage());
-        printPrompt();
+        try {
+            System.out.println(RED + notification.message());
+            client.gamePlayUI(notification.gameID(), notification.playerColor());
+//            String board = client.getBoard(new String[]{"getBoard", notification.gameID(), notification.playerColor()});
+//            ChessBoardDisplay.draw(board, notification.playerColor());
+
+//            printPrompt();
+        } catch(Error e){
+            System.out.println(e);
+        }
     }
 
-    private void printPrompt() {
-        System.out.print("\n" + RESET + ">>> " + GREEN);
-    }
+
 }

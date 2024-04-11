@@ -15,8 +15,9 @@ public class UserGameCommand {
     private String playerColor;
     private String username;
     private ChessMove move;
+    private String gameID;
 
-    public UserGameCommand(String authToken) {
+    public UserGameCommand(String authToken, String username, String playerColor) {
         this.authToken = authToken;
     }
 
@@ -26,10 +27,11 @@ public class UserGameCommand {
         this.move = move;
     }
 
-    public UserGameCommand(String authToken, String username, String playerColor) {
+    public UserGameCommand(String authToken, String username, String playerColor, String gameID) {
         this.authToken = authToken;
         this.username = username;
         this.playerColor = playerColor;
+        this.gameID = gameID;
     }
 
     public String getUsername() {
@@ -39,6 +41,8 @@ public class UserGameCommand {
     public ChessMove getMove() {
         return this.move;
     }
+
+    public String getGameID() { return this.gameID; }
 
     public enum CommandType {
         JOIN_PLAYER,

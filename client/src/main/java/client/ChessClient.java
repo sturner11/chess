@@ -3,10 +3,15 @@ package client;
 import client.websocket.NotificationHandler;
 import client.websocket.WebSocketFacade;
 import dataAccess.DataAccessException;
+import ui.ChessBoardDisplay;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
+
+import static java.awt.Color.GREEN;
+import static java.awt.Color.RED;
+import static org.glassfish.grizzly.Interceptor.RESET;
 
 public class ChessClient {
     private final String URL;
@@ -15,6 +20,8 @@ public class ChessClient {
     private  boolean loggedIn = false;
 
     private String username;
+
+    private String playerColor;
 
     private WebSocketFacade ws;
     private NotificationHandler notificationHandler;
@@ -89,7 +96,9 @@ public class ChessClient {
         Map<String, String> body = createBody(userArgs, new String[] {"gameID", "playerColor"});
         if ( body != null && !body.isEmpty()){
             try {
+                playerColor = body.get("playerColor");
                 viewGame(body);
+
             } catch (Exception e) {
                 System.out.println("Could not join game. Please try again");
             }
@@ -128,7 +137,7 @@ public class ChessClient {
         assert resp != null;
         ws = new WebSocketFacade(URL, notificationHandler);
         ws.joinPlayer(body.get("gameID"), username, body.get("playerColor"), auth);
-
+        gamePlayUI(body.get("gameID"), body.get("playerColor"));
         // TODO detemine where I display the board I think it is in WebSocketFacade
 //        System.out.println("BLACK");
 //        ChessBoardDisplay display = new ChessBoardDisplay();
@@ -138,6 +147,16 @@ public class ChessClient {
 
     }
 
+    public void gamePlayUI(String gameID, String playerColor) {
+        String board = getBoard(new String[]{"getBoard", gameID, playerColor});
+        ChessBoardDisplay.draw(board, this.playerColor != null ? playerColor : "WHITE");
+
+        printPrompt();
+    }
+
+    private void printPrompt() {
+        System.out.print("\n" + RESET + ">>> " + GREEN);
+    }
     public  void listGames() {
         try {
             curlArgs = new String[]{"GET", auth, URL + "game"};
@@ -191,6 +210,24 @@ public class ChessClient {
         } else {
             System.out.println("Please enter the correct amount of arguments for command: " + userArgs[0]);
         }
+    }
+
+    public String getBoard(String[] userArgs) {
+        userArgs[2] = playerColor; //override old player color ar
+        Map<String, String> body = createBody(userArgs, new String[] {"gameID", "playerColor"});
+        if ( body != null && !body.isEmpty()){
+            try {
+                curlArgs = new String[]{"PUT", auth, URL + "board", body.toString()};
+                Map resp = ClientCurl.makeReq(curlArgs);
+                assert resp != null;
+                return (String) resp.get("gameBoard");
+            } catch (Exception e) {
+                System.out.println("Could not join game. Please try again");
+            }
+        } else {
+            System.out.println("Please enter the correct amount of arguments for command: " + userArgs[0]);
+        }
+        return null;
     }
 
     public void user( String[] userArgs) {

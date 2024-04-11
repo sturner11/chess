@@ -59,7 +59,7 @@ public class Server {
             var userName = userService.checkAuth(request.headers("Authorization"));
             String gameBoard = gameService.getBoard(request.headers("Authorization"), body.playerColor(), body.gameID());
             response.status(200);
-            return new Gson().toJson(Map.of("gameBoard", gameBoard));
+            return new Gson().toJson(Map.of("gameBoard", gameBoard, "playerColor", body.playerColor() != null ? body.playerColor(): "WHITE", "gameID", body.gameID()));
         } catch(DataAccessException e){
             response.status(e.getStatus());
             return new Gson().toJson(new ErrorMessage(e.getMessage()));
@@ -70,7 +70,6 @@ public class Server {
 
     private Object listGame(Request request, Response response) {
         try {
-            // TODO: Make Game IDS integers
             var userName = userService.checkAuth(request.headers("Authorization"));
             ArrayList<Game> games = gameService.listGames();
             response.status(200);

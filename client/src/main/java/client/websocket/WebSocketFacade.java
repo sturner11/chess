@@ -9,6 +9,7 @@ import javax.websocket.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
 
 import static webSocketMessages.userCommands.UserGameCommand.CommandType.JOIN_PLAYER;
 
@@ -54,13 +55,15 @@ public class WebSocketFacade extends Endpoint {
 
     public void joinPlayer(String gameID,  String username, String playerColor, String auth) throws IOException {
         try {
-        var action = new UserGameCommand(auth, username, playerColor);
+        var action = new UserGameCommand(auth, username, playerColor, gameID);
         action.setCommandType(JOIN_PLAYER);
         this.session.getBasicRemote().sendText(new Gson().toJson(action));
         } catch (IOException ex) {
 //            throw new Exception(500, ex.getMessage()); TODO
         }
     }
+
+
 
 
 //    public static void main(String[] args) {

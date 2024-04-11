@@ -19,23 +19,23 @@ public class WebSocketHandler {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
         switch (command.getCommandType()) {
             case JOIN_PLAYER:
-                join(command.getUsername(), session, command.getPlayerColor());
+                join(command.getUsername(), session, command.getPlayerColor(), command.getGameID());
                 break;
             case MAKE_MOVE:
-                move(command.getUsername(), command.getMove(), session);
+                move(command.getUsername(), command.getMove(), session, command.getPlayerColor(), command.getGameID());
         }
     }
 
-    private void join(String username, Session session, String playerColor) throws IOException {
+    private void join(String username, Session session, String playerColor, String gameID) throws IOException {
         connections.add(username, session);
-        var message = username + " has joined the game as " + (playerColor == null ? playerColor : "an observer");
-        var notification = new Notification(Notification.Type.JOIN, message);
+        var message = username + " has joined the game as " + (playerColor != null ? playerColor : "an observer");
+        var notification = new Notification(Notification.Type.JOIN, message, playerColor, username, gameID);
         connections.broadcast(username, notification);
     }
 
-    private void move(String username, ChessMove move, Session session) throws IOException {
+    private void move(String username, ChessMove move, Session session, String playerColor, String gameID) throws IOException {
         var message = username + " moves to " + move.toString();
-        var notification = new Notification(Notification.Type.MOVE, message);
+        var notification = new Notification(Notification.Type.MOVE, message, playerColor, username, gameID);
         connections.broadcast(username, notification);
     }
 
