@@ -63,6 +63,10 @@ public class WebSocketHandler {
 
     private void resign(Session session, UserGameCommand command) throws IOException {
         try {
+            getValidData(command.getAuthString(), command.getGameID());
+            if (isObserver(command.getGameID(), username)){
+                throw new Exception();
+            }
             this.playerColor = command.getPlayerColor();
             ChessGame game =  new Gson().fromJson(gameService.getBoard(Integer.parseInt(command.getGameID())), ChessGame.class);
             game.resign();
