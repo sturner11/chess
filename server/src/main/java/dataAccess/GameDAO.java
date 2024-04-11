@@ -113,7 +113,7 @@ public class GameDAO implements DAO{
         }
     }
 
-    private Game getGame(Integer gameId) throws SQLException {
+    public Game getGame(Integer gameId) throws SQLException {
         if (!isInitialized){
             throw new SQLException("Game Doesn't Exist");
         }

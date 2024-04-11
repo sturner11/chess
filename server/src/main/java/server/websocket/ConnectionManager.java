@@ -54,13 +54,4 @@ public class ConnectionManager {
         }
     }
 
-    public void sendError(String username, ErrorMessage serverMessage) throws IOException {
-        for (var c : connections.values()) {
-            if (c.session.isOpen()) {
-                if (c.username.equals(username)) {
-                    c.send(new Gson().toJson(serverMessage));
-                }
-            }
-        }
-    }
 }

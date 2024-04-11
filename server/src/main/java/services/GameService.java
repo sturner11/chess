@@ -47,5 +47,9 @@ public class GameService {
     public String getUser(String gameID, String playerColor) {
         return gameDAO.getUser(gameID, playerColor);
     }
+
+    public void getGame(String gameID) throws SQLException {
+        gameDAO.getGame(Integer.valueOf(gameID));
+    }
 }
 

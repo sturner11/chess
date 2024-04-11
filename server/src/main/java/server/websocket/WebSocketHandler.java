@@ -1,7 +1,6 @@
 package server.websocket;
 
 
-import chess.ChessMove;
 import com.google.gson.Gson;
 import dataAccess.DataAccessException;
 import org.eclipse.jetty.websocket.api.Session;
@@ -16,12 +15,12 @@ import webSocketMessages.userCommands.MoveCommand;
 import webSocketMessages.userCommands.UserGameCommand;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 @WebSocket
 public class WebSocketHandler {
     GameService gameService = new GameService();
     UserService userService = new UserService();
+    private String username;
 
     private final ConnectionManager connections = new ConnectionManager();
 
@@ -33,7 +32,10 @@ public class WebSocketHandler {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
         switch (command.getCommandType()) {
             case JOIN_PLAYER:
-                join(command.getUsername(), session, command.getPlayerColor(), command.getGameID(), command.getAuthString());
+                joinPlayer(command.getUsername(), session, command.getPlayerColor(), command.getGameID(), command.getAuthString(), false);
+                break;
+            case JOIN_OBSERVER:
+                joinPlayer(command.getUsername(), session, command.getPlayerColor(), command.getGameID(), command.getAuthString(), true);
                 break;
             case LEAVE:
                 leave(command.getUsername(), command.getGameID(), command.getPlayerColor());
@@ -54,18 +56,20 @@ public class WebSocketHandler {
         gameService.removeUser(gameID, playerColor);
     }
 
-    private void join(String username, Session session, String playerColor, String gameID, String auth) throws IOException {
+    private void joinPlayer(String username, Session session, String playerColor, String gameID, String auth, Boolean observer) throws IOException {
         try {
             if (username == null){
-                    username = userService.getUser(auth);
+                username = userService.getUser(auth);
             }
-            String player = gameService.getUser(gameID, playerColor);
-            if (player == null) {
-                throw new Exception();
-            } else if (!player.equals(username)) {
+            if(!observer){
+                username = checkUser(username, gameID, playerColor);
+                if (username == "null") {throw new Exception();}
+            }
+            if (username == null) {
                 username = "null";
                 throw new Exception();
             }
+            gameService.getGame(gameID);
             connections.add(username, session);
             var message = username + " has joined the game as " + (playerColor != null ? playerColor : "an observer");
             var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameID, message);
@@ -76,9 +80,17 @@ public class WebSocketHandler {
             connections.add(username, session);
             var message = "Could not join game";
             var serverMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, null, message);
-            connections.sendError(username, serverMessage);
+            connections.send(username, serverMessage);
             connections.remove(username);
         }
+    }
+
+    private String checkUser(String username, String gameID, String playerColor) throws Exception {
+        String player = gameService.getUser(gameID, playerColor);
+        if (!player.equals(username)) {
+            return "null";
+        }
+        return username;
     }
 
     private void move(String username, String piecePosition, String desiredPosition) throws IOException {
