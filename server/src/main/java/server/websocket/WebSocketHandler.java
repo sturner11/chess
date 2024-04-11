@@ -55,18 +55,15 @@ public class WebSocketHandler {
     }
 
     private void join(String username, Session session, String playerColor, String gameID, String auth) throws IOException {
-        if (username == null){
-            try {
-                username = userService.getUser(auth);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        }
         try {
-        String player = gameService.getUser(gameID, playerColor);
+            if (username == null){
+                    username = userService.getUser(auth);
+            }
+            String player = gameService.getUser(gameID, playerColor);
             if (player == null) {
                 throw new Exception();
             } else if (!player.equals(username)) {
+                username = "null";
                 throw new Exception();
             }
             connections.add(username, session);
