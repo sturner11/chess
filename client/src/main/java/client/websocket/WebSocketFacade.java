@@ -118,11 +118,12 @@ public class WebSocketFacade extends Endpoint {
         HashMap<Character, Integer> letterNumberMap = new HashMap<>();
 
         // Loop through the first 10 letters (A-J) and add them to the map
-        for (char ch = 'a'; ch <= 'j'; ch++) {
-            int number = ch - 'a' + 1; // Calculate corresponding number (1-based)
-            letterNumberMap.put(ch, number);
+        int count = 1;
+        for (char ch = 'a'; ch <= 'h'; ch++) {
+            letterNumberMap.put(ch, count);
+            count++;
         }
-        return new Integer[]{letterNumberMap.get(piecePosition.charAt(0)), Integer.parseInt(piecePosition.substring(1))};
+        return new Integer[]{Integer.parseInt(piecePosition.substring(1)), letterNumberMap.get(piecePosition.charAt(0))};
     }
 
 }
