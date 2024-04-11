@@ -85,8 +85,11 @@ public class WebSocketHandler {
                 game.makeMove(move);
                 gameService.makeMove(game, gameID);
                 String message = username + " moves " + move.getStartPosition().toString() + " to " + move.getEndPosition().toString();
-                var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message,  game);
-                connections.sendAll(notification);
+                String gameString =  gameService.getBoard(Integer.parseInt(gameID));
+                var loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, message,  gameString);
+                connections.sendAll(loadGame);
+                var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message,  gameString);
+                connections.broadcast(username, notification);
             }
 
         } catch (Exception e) {
