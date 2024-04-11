@@ -85,8 +85,8 @@ public class WebSocketHandler {
                 game.makeMove(move);
                 gameService.makeMove(game, gameID);
                 String message = username + " moves " + move.getStartPosition().toString() + " to " + move.getEndPosition().toString();
-                String gameString = new Gson().toJson(game);
-                sendMessage(gameString, message, gameID);
+                var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message,  game);
+                connections.sendAll(notification);
             }
 
         } catch (Exception e) {

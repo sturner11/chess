@@ -48,4 +48,12 @@ public class ConnectionManager {
         }
     }
 
+    public void sendAll(ServerMessage notification) throws IOException {
+        for (var c : connections.values()) {
+//            if (c.session.isOpen()) {
+                    c.send(new Gson().toJson(notification));
+//            }
+        }
+    }
+
 }
