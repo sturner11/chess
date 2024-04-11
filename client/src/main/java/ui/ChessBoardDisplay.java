@@ -1,12 +1,10 @@
 package ui;
 
-import chess.ChessBoard;
-
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-import  ui.EscapeSequences.*;
+import chess.ChessMove;
 
 import static java.lang.System.out;
 import static ui.EscapeSequences.*;
@@ -29,7 +27,7 @@ public class ChessBoardDisplay {
     private static String whiteBG;
     private static String whiteT;
 
-    public static void draw(String board, String color) {
+    public static void draw(String board, String color, Collection<ChessMove> validMoves) {
         boardColor = color;
         chessBoard = new ArrayList<>();
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
@@ -40,16 +38,13 @@ public class ChessBoardDisplay {
         String[] rows = board.split(";");
         for (String row : rows) {
             String[] rowList = row.split(",");
-            if (color == "BLACK"){
+            if (Objects.equals(color, "BLACK")) {
                 List<String> list = Arrays.asList(rowList);
                 Collections.reverse(list);
                 list.toArray(rowList);
                 chessBoard.add(rowList);
             } else {
-                whiteBG = SET_BG_COLOR_WHITE;
-                whiteT = SET_TEXT_COLOR_BLACK;
-                blackBG = SET_BG_COLOR_BLACK;
-                blackT = SET_TEXT_COLOR_WHITE;
+
             chessBoard.add(rowList);
             }
         }
@@ -57,10 +52,10 @@ public class ChessBoardDisplay {
         rowVals = new String[]{"8", "7","6","5", "4", "3", "2", "1"};
 
         if (Objects.equals(color, "BLACK")) {
-            blackBG = SET_BG_COLOR_WHITE;
-            blackT = SET_TEXT_COLOR_BLACK;
-            whiteBG = SET_BG_COLOR_BLACK;
-            whiteT = SET_TEXT_COLOR_WHITE;
+            whiteBG = SET_BG_COLOR_WHITE;
+            whiteT = SET_TEXT_COLOR_BLACK;
+            blackBG = SET_BG_COLOR_BLACK;
+            blackT = SET_TEXT_COLOR_WHITE;
                 List<String> list = Arrays.asList(headers);
                 Collections.reverse(list);
                 headers = list.toArray(new String[list.size()]);
