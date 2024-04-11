@@ -43,6 +43,9 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition, ChessGame.TeamColor color) {
 
         Collection<ChessMove> validMoves = new HashSet<ChessMove>();
+        if (color != teamTurn){
+            return validMoves;
+        }
         ChessPiece piece = this.board.getBoard()[startPosition.getRow() - 1][startPosition.getColumn() - 1];
         if (color == null){ // in Some test they forget to set Whose turn it is.
             color = piece.getTeamColor();
