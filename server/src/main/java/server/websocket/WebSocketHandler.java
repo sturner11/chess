@@ -75,10 +75,10 @@ public class WebSocketHandler {
             String gameString = gameService.getBoard(Integer.parseInt(command.getGameID()));
             var message = username + " has resigned. Coward. Thanks for playing!";
             var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message,  gameString);
-            connections.sendAll(notification);
+            connections.sendAll(notification, command.getGameID());
         } catch (Exception e) {
             var message = "Could not Resign. Keep Fighting!";
-            sendError(session, message);
+            sendError(session, message, command.getGameID());
         }
     }
 
@@ -88,12 +88,12 @@ public class WebSocketHandler {
             this.playerColor = playerColor;
             getValidData(auth, gameID);
             var message = username + " has joined the game as " + (playerColor != null ? playerColor : "an observer");
-            connections.add(username, session);
+            connections.add(username, session, gameID);
             String gameString =  gameService.getBoard(Integer.parseInt(gameID));
             sendMessage(gameString, message, gameID);
         } catch (Exception e) {
             var message = "Could not join game";
-           sendError(session, message);
+           sendError(session, message, gameID);
         }
     }
 
@@ -107,16 +107,16 @@ public class WebSocketHandler {
                 String message = username + " moves " + move.getStartPosition().toString() + " to " + move.getEndPosition().toString();
                 String gameString =  gameService.getBoard(Integer.parseInt(gameID));
                 var loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, message,  gameString);
-                connections.sendAll(loadGame);
+                connections.sendAll(loadGame, gameID);
                 var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message,  gameString);
-                connections.broadcast(username, notification);
+                connections.broadcast(username, notification, gameID);
             } else {
                 throw new Exception();
             }
 
         } catch (Exception e) {
             var message = "Invald move";
-            sendError(session, message);
+            sendError(session, message, gameID);
         }
     }
 
@@ -131,12 +131,12 @@ public class WebSocketHandler {
             var message = username + " has left the game";
 //        var notification = new Notification(Notification.Type.LEAVE, message, null, username, gameID);
             var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message, command.getGameID());
-            connections.broadcast(username, notification);
-            connections.remove(username);
+            connections.broadcast(username, notification, command.getGameID());
+            connections.remove(username, command.getGameID());
             gameService.removeUser(command.getGameID(), command.getPlayerColor());
         } catch (Exception e) {
             var message = "Failed to leave. Please try again";
-            sendError(session, message);
+            sendError(session, message, command.getGameID());
         }
     }
 
@@ -175,16 +175,16 @@ public class WebSocketHandler {
 
     private void sendMessage(String game, String message, String gameID) throws IOException {
         var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, game, message, playerColor);
-        connections.send(username, serverMessage);
+        connections.send(username, serverMessage, gameID);
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, gameID, message);
-        connections.broadcast(username, notification);
+        connections.broadcast(username, notification, gameID);
     }
 
-    private void sendError(Session session, String message) throws IOException {
-        connections.add(username, session);
+    private void sendError(Session session, String message, String gameID) throws IOException {
+        connections.add(username, session, gameID);
         var serverMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, null, message);
-        connections.send(username, serverMessage);
-        connections.remove(username);
+        connections.send(username, serverMessage,gameID);
+        connections.remove(username, gameID);
     }
 
 
