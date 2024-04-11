@@ -62,7 +62,7 @@ public class WebSocketHandler {
             }
         }
             String player = gameService.getUser(gameID, playerColor);
-        if (player.equals(username)){
+        if (player != null && player.equals(username)){
             connections.add(username, session);
             var message = username + " has joined the game as " + (playerColor != null ? playerColor : "an observer");
             var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameID, message);
