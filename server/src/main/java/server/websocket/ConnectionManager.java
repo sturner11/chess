@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
+import webSocketMessages.serverMessages.ErrorMessage;
 import webSocketMessages.serverMessages.ServerMessage;
 
 public class ConnectionManager {
@@ -49,6 +50,16 @@ public class ConnectionManager {
             if (c.username.equals(username)) {
                 c.send(new Gson().toJson(serverMessage));
             }
+            }
+        }
+    }
+
+    public void sendError(String username, ErrorMessage serverMessage) throws IOException {
+        for (var c : connections.values()) {
+            if (c.session.isOpen()) {
+                if (c.username.equals(username)) {
+                    c.send(new Gson().toJson(serverMessage));
+                }
             }
         }
     }

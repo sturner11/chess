@@ -10,6 +10,7 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import services.GameService;
 import services.UserService;
 import webSocketMessages.Notification;
+import webSocketMessages.serverMessages.ErrorMessage;
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.MoveCommand;
 import webSocketMessages.userCommands.UserGameCommand;
@@ -61,19 +62,24 @@ public class WebSocketHandler {
                 throw new RuntimeException(e);
             }
         }
-            String player = gameService.getUser(gameID, playerColor);
-        if (player != null && player.equals(username)){
+        try {
+        String player = gameService.getUser(gameID, playerColor);
+            if (player == null) {
+                throw new Exception();
+            } else if (!player.equals(username)) {
+                throw new Exception();
+            }
             connections.add(username, session);
             var message = username + " has joined the game as " + (playerColor != null ? playerColor : "an observer");
             var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameID, message);
             connections.send(username, serverMessage);
             var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, gameID, message);
             connections.broadcast(username, notification);
-        } else {
+        } catch (Exception e) {
             connections.add(username, session);
             var message = "Could not join game";
-            var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR, null, message);
-            connections.send(username, serverMessage);
+            var serverMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, null, message);
+            connections.sendError(username, serverMessage);
             connections.remove(username);
         }
     }
