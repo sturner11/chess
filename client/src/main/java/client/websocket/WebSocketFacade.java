@@ -49,7 +49,18 @@ public class WebSocketFacade extends Endpoint {
 
     public void makeMove(Integer gameID, ChessMove move){}
 
-    public void leave(Integer gameID) {}
+    public void leave(String authToken, String username) {
+        try {
+            var action = new UserGameCommand( authToken, username);
+            action.setCommandType(UserGameCommand.CommandType.LEAVE);
+            this.session.getBasicRemote().sendText(new Gson().toJson(action));
+            this.session.close();
+        } catch (IOException ex) {
+//            throw new Exception(500, ex.getMessage()); TODO: FIX EXCEPTIONS
+        }
+    }
+
+
 
     public void resign (Integer gameID) {}
 

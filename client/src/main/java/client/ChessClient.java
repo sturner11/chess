@@ -25,6 +25,8 @@ public class ChessClient {
 
     private WebSocketFacade ws;
     private NotificationHandler notificationHandler;
+    private boolean chessUI = false;
+    private String gameID;
 
     public ChessClient(int port, String serverUrl, NotificationHandler notificationHandler) {
         this.notificationHandler = notificationHandler;
@@ -35,7 +37,29 @@ public class ChessClient {
     public  void eval(String line) {
         var userArgs = line.split(" ");
         var command = userArgs[0];
-        if (!loggedIn) {
+        if (chessUI){
+            switch (command) {
+                case "help":
+                    help();
+                    break;
+                case "redraw":
+                    gamePlayUI(gameID, playerColor);
+                    break;
+                case "leave":
+                    leave();
+                    break;
+                case "move":
+                    move(userArgs);
+                    break;
+                case "resign":
+                    resign();
+                    break;
+                case "highlight":
+                    highlight(userArgs);
+                    break;
+            }
+
+        } else if (!loggedIn) {
             switch (command) {
                 case "help":
                     help();
@@ -81,7 +105,18 @@ public class ChessClient {
         System.out.println();
     }
 
-      public void logout() {
+    private void move(String[] userArgs) {
+
+    }
+
+    private void leave() {
+        playerColor = null;
+        gameID = null;
+        chessUI = false;
+        ws.leave(auth, username);
+    }
+
+    public void logout() {
         try {
             curlArgs = new String[]{"DELETE", auth, URL + "session"};
             ClientCurl.makeReq(curlArgs);
@@ -135,6 +170,7 @@ public class ChessClient {
         curlArgs = new String[]{"PUT", auth, URL + "game", body.toString()};
         Map resp = ClientCurl.makeReq(curlArgs);
         assert resp != null;
+        gameID = body.get("gameID");
         ws = new WebSocketFacade(URL, notificationHandler);
         ws.joinPlayer(body.get("gameID"), username, body.get("playerColor"), auth);
         gamePlayUI(body.get("gameID"), body.get("playerColor"));
@@ -152,6 +188,7 @@ public class ChessClient {
         ChessBoardDisplay.draw(board, this.playerColor != null ? playerColor : "WHITE");
 
         printPrompt();
+        chessUI = true;
     }
 
     private void printPrompt() {
@@ -251,7 +288,15 @@ public class ChessClient {
 
     public  void help() {
         String help;
-        if (!loggedIn){
+        if (chessUI){
+            help = """
+                    redraw - redraw chess board
+                    leave - leave the current game
+                    move <PIECE POSITION> <DESIRED SQUARE> - moves piece in PIECE POSITION to DESIRED SQUARE
+                    resign - forfeit game (must still leave the game)
+                    highlight <PIECE POSITION> - Show all legal moves for piece in PIECE POSITION
+                    """;
+        } else if (!loggedIn){
             help = """
                         register <USERNAME> <PASSWORD> <EMAIL> - to create an account
                         login <USERNAME> <PASSWORD> - to play chess

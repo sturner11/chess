@@ -21,6 +21,11 @@ public class UserGameCommand {
         this.authToken = authToken;
     }
 
+    public UserGameCommand(String authToken, String username){
+        this.authToken = authToken;
+        this.username = username;
+    }
+
     public UserGameCommand(String authToken, String username, ChessMove move) {
         this.authToken = authToken;
         this.username = username;
