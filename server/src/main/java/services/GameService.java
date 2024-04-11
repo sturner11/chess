@@ -1,6 +1,5 @@
 package services;
 
-import chess.ChessGame;
 import dataAccess.DataAccessException;
 import dataAccess.GameDAO;
 import models.Game;
@@ -61,7 +60,7 @@ public class GameService {
         return gameDAO.getPlayerColor(username, gameID);
     }
 
-    public void updateBoard(ChessGame game, String gameID) {
+    public void updateBoard(String game, String gameID) {
         gameDAO.updateBoard(game, gameID);
     }
 }

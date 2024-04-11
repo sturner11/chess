@@ -1,6 +1,7 @@
 package server.websocket;
 
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessMove;
 import com.google.gson.Gson;
@@ -72,7 +73,7 @@ public class WebSocketHandler {
             this.playerColor = command.getPlayerColor();
             ChessGame game =  new Gson().fromJson(gameService.getBoard(Integer.parseInt(command.getGameID())), ChessGame.class);
             game.resign();
-            gameService.updateBoard(game, command.getGameID());
+            gameService.updateBoard(new Gson().toJson(game), command.getGameID());
             String gameString = gameService.getBoard(Integer.parseInt(command.getGameID()));
             var message = username + " has resigned. Coward. Thanks for playing!";
             var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message,  gameString);
@@ -104,10 +105,12 @@ public class WebSocketHandler {
             ChessGame game =  new Gson().fromJson(gameService.getBoard(Integer.parseInt(gameID)), ChessGame.class);
             if (isValidMove(move, gameID, playerColor, game)) {
                 game.makeMove(move);
-                gameService.updateBoard(game, gameID);
+                gameService.updateBoard(new Gson().toJson(game), gameID);
                 String message = username + " moves " + move.getStartPosition().toString() + " to " + move.getEndPosition().toString();
                 String gameString =  gameService.getBoard(Integer.parseInt(gameID));
-                var loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, message,  gameString);
+//                var serverMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, game, message, playerColor);
+
+                var loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameString, message, playerColor);
                 connections.sendAll(loadGame, gameID);
                 var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message,  gameString);
                 connections.broadcast(username, notification, gameID);

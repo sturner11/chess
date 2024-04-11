@@ -270,7 +270,7 @@ public class GameDAO implements DAO{
         return playerColor;
     }
 
-    public void updateBoard(ChessGame game, String gameID) {
+    public void updateBoard(String game, String gameID) {
         String sql = "UPDATE games SET  gameBoard =" + "'" + game + "'" + "WHERE gameId = " + gameID;
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement
