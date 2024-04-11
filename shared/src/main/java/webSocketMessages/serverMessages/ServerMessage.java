@@ -19,13 +19,19 @@ public class ServerMessage {
 
     private String game;
     private String message;
+    private String playerColor;
 
 
-    public ServerMessage(ServerMessageType type, String game) {
+    public ServerMessage(ServerMessageType type, String game, String message, String playerColor) {
         this.serverMessageType = type;
+        this.message = message;
         this.game = game;
+        this.playerColor = playerColor;
     }
 
+    public String getPlayerColor() {
+        return playerColor;
+    }
 
     public ServerMessage(ServerMessageType type, String game, String message){
         this.serverMessageType = type;

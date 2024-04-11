@@ -6,7 +6,7 @@ private String errorMessage;
 
 
     public ErrorMessage(ServerMessageType type, String game, String errorMessage) {
-        super(type, game);
+        super(type, game, null, null);
         this.errorMessage = errorMessage;
 
     }

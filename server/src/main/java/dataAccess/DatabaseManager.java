@@ -83,7 +83,7 @@ public class DatabaseManager {
             CREATE TABLE IF NOT EXISTS  games (
               `gameId` int NOT NULL AUTO_INCREMENT,
               `gameName` varchar(256) NOT NULL,
-              `gameBoard` varchar(256) DEFAULT NULL,
+              `gameBoard` varchar(2048) DEFAULT NULL,
               `WHITE` varchar(256) DEFAULT NULL,
               `BLACK` varchar(256) DEFAULT NULL,
               PRIMARY KEY (`gameId`)

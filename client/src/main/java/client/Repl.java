@@ -1,18 +1,12 @@
 package client;
 
 import client.websocket.NotificationHandler;
-import client.websocket.WebSocketFacade;
-import com.google.gson.Gson;
-import ui.ChessBoardDisplay;
-import webSocketMessages.Notification;
-import webSocketMessages.userCommands.UserGameCommand;
+import webSocketMessages.serverMessages.ServerMessage;
 
 import java.util.Objects;
 import java.util.Scanner;
 
-import static java.awt.Color.GREEN;
 import static java.awt.Color.RED;
-import static org.glassfish.grizzly.Interceptor.RESET;
 
 public class Repl implements NotificationHandler {
 
@@ -42,13 +36,23 @@ public class Repl implements NotificationHandler {
     }
 
     @Override
-    public void notify(Notification notification) {
+    public void notify(ServerMessage message) {
         try {
-            System.out.println(RED + notification.message());
-            client.gamePlayUI(notification.gameID(), notification.playerColor());
+            switch (message.getServerMessageType()){
+                case ServerMessage.ServerMessageType.NOTIFICATION:
+                    System.out.println(message.getMessage());
+                    break;
+                case ServerMessage.ServerMessageType.LOAD_GAME:
+                    client.gamePlayUI(message.getGame(), message.getPlayerColor());
+                    break;
+                case ServerMessage.ServerMessageType.ERROR:
+                    System.out.println(message.getMessage());
+            }
+
         } catch(Error e){
             System.out.println(e);
         }
+        System.out.println(">>>");
     }
 
 

@@ -1,8 +1,10 @@
 package client.websocket;
 
 import chess.ChessMove;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 //import webSocketMessages.userCommands.JoinPlayerCommand;
+import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.MoveCommand;
 import webSocketMessages.userCommands.UserGameCommand;
 
@@ -11,6 +13,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 
 import static webSocketMessages.userCommands.UserGameCommand.CommandType.JOIN_PLAYER;
 
@@ -30,8 +33,8 @@ public class WebSocketFacade extends Endpoint {
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String s) {
-                    webSocketMessages.Notification notification = new Gson().fromJson(s, webSocketMessages.Notification.class);
-                    notificationHandler.notify(notification);
+                    ServerMessage serverMessage= new Gson().fromJson(s, ServerMessage.class);
+                    notificationHandler.notify(serverMessage);
                 }
             });
         } catch (URISyntaxException | RuntimeException | IOException | DeploymentException e) {
@@ -51,14 +54,14 @@ public class WebSocketFacade extends Endpoint {
     public void makeMove(Integer gameID, ChessMove move){}
 
     public void leave(String auth, String username, String playerColor, String gameID) {
-        try {
-            var action = new UserGameCommand(auth, username, playerColor, gameID);
-            action.setCommandType(UserGameCommand.CommandType.LEAVE);
-            this.session.getBasicRemote().sendText(new Gson().toJson(action));
-            this.session.close();
-        } catch (IOException ex) {
-//            throw new Exception(500, ex.getMessage()); TODO: FIX EXCEPTIONS
-        }
+//        try {
+//            var action = new UserGameCommand(auth, username, playerColor, gameID);
+//            action.setCommandType(UserGameCommand.CommandType.LEAVE);
+//            this.session.getBasicRemote().sendText(new Gson().toJson(action));
+//            this.session.close();
+//        } catch (IOException ex) {
+////            throw new Exception(500, ex.getMessage()); TODO: FIX EXCEPTIONS
+//        }
     }
 
 
@@ -67,22 +70,40 @@ public class WebSocketFacade extends Endpoint {
 
     public void joinPlayer(String gameID,  String username, String playerColor, String auth) throws IOException {
         try {
-        var action = new UserGameCommand(auth, username, playerColor, gameID);
+        var action = new UserGameCommand(auth, playerColor, gameID);
         action.setCommandType(JOIN_PLAYER);
         this.session.getBasicRemote().sendText(new Gson().toJson(action));
         } catch (IOException ex) {
+            var test = ex;
 //            throw new Exception(500, ex.getMessage()); TODO
         }
     }
 
-    public void makeMove(String piecePosition, String desiredPosition, String auth, String username) {
+    public void makeMove(String piecePosition, String desiredPosition, String auth, String gameId) {
         try {
-            var action = new MoveCommand(auth, username, piecePosition, desiredPosition);
+            Integer[] piecePositionInts = positionConverter(piecePosition);
+            Integer[] desiredPositionInts = positionConverter(desiredPosition);
+            ChessPosition startPosition = new ChessPosition(piecePositionInts[0], piecePositionInts[1]);
+            ChessPosition endPosition = new ChessPosition(desiredPositionInts[0], desiredPositionInts[1]);
+
+            ChessMove chessMove = new ChessMove(startPosition, endPosition, null);
+            var action = new MoveCommand(auth, gameId, chessMove);
             action.setCommandType(JOIN_PLAYER);
             this.session.getBasicRemote().sendText(new Gson().toJson(action));
         } catch (IOException ex) {
 //            throw new Exception(500, ex.getMessage()); TODO
         }
+    }
+
+    private Integer[] positionConverter(String piecePosition) {
+        HashMap<Character, Integer> letterNumberMap = new HashMap<>();
+
+        // Loop through the first 10 letters (A-J) and add them to the map
+        for (char ch = 'a'; ch <= 'j'; ch++) {
+            int number = ch - 'a' + 1; // Calculate corresponding number (1-based)
+            letterNumberMap.put(ch, number);
+        }
+        return new Integer[] {letterNumberMap.get(piecePosition.charAt(0)), Integer.parseInt(piecePosition.substring(1))};
     }
 
 

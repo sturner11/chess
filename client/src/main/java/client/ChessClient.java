@@ -1,7 +1,9 @@
 package client;
 
+import chess.ChessGame;
 import client.websocket.NotificationHandler;
 import client.websocket.WebSocketFacade;
+import com.google.gson.Gson;
 import dataAccess.DataAccessException;
 import ui.ChessBoardDisplay;
 
@@ -106,27 +108,9 @@ public class ChessClient {
     }
 
     private void move(String[] userArgs) {
-        boolean moveSuccessful = false;
         if (userArgs.length == 3) {
-            String[] bodyArgs = {userArgs[0], gameID, playerColor, userArgs[1], userArgs[2]};
-            Map<String, String> body = createBody(bodyArgs, new String[] {"gameID", "playerColor", "piecePosition", "desiredPosition"});
-            if ( body != null && !body.isEmpty()){
-                try {
-                    curlArgs = new String[]{"PUT", auth, URL + "move", body.toString()};
-                    ClientCurl.makeReq(curlArgs);
-                    System.out.println("Move successfully made.");
-                    moveSuccessful = true;
-                } catch (Exception e) {
-                    System.out.println("Invalid move. Make sure to enter a valid move or wait for your turn");
-                }
-            } else {
-                System.out.println("Please enter the correct amount of arguments for command: " + userArgs[0]);
-            }
-
-            // if good, notify other users via websocket
-            if (moveSuccessful) {
                 ws.makeMove(userArgs[1], userArgs[2], auth, username);
-            }
+
         } else {
             System.out.println("Please enter the correct amount of arguments for command: " + userArgs[0]);
         }
@@ -198,19 +182,12 @@ public class ChessClient {
         gameID = body.get("gameID");
         ws = new WebSocketFacade(URL, notificationHandler);
         ws.joinPlayer(body.get("gameID"), username, body.get("playerColor"), auth);
-        gamePlayUI(body.get("gameID"), body.get("playerColor"));
-        // TODO detemine where I display the board I think it is in WebSocketFacade
-//        System.out.println("BLACK");
-//        ChessBoardDisplay display = new ChessBoardDisplay();
-//        display.draw((String) resp.get("gameBoard"), "BLACK");
-//        System.out.println("WHITE");
-//        display.draw((String) resp.get("gameBoard"), "WHITE");
-
+//        gamePlayUI(body.get("gameID"), body.get("playerColor"));
     }
 
-    public void gamePlayUI(String gameID, String playerColor) {
-        String board = getBoard(new String[]{"getBoard", gameID, playerColor});
-        ChessBoardDisplay.draw(board, this.playerColor != null ? playerColor : "WHITE");
+    public void gamePlayUI(String game, String playerColor) {
+        ChessGame chessGame = new Gson().fromJson(game, ChessGame.class);
+        ChessBoardDisplay.draw(chessGame.getBoard().toString(), this.playerColor != null ? playerColor : "WHITE");
 
         printPrompt();
         chessUI = true;
@@ -317,7 +294,7 @@ public class ChessClient {
             help = """
                     redraw - redraw chess board
                     leave - leave the current game
-                    move <PIECE POSITION> <DESIRED SQUARE> - moves piece in PIECE POSITION to DESIRED SQUARE
+                    move <PIECE POSITION> <DESIRED SQUARE> <PROMOTION PIECE>[q,r,k,b] (Defaults to null)- moves piece in PIECE POSITION to DESIRED SQUARE
                     resign - forfeit game (must still leave the game)
                     highlight <PIECE POSITION> - Show all legal moves for piece in PIECE POSITION
                     """;

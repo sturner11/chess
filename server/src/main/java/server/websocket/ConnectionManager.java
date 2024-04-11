@@ -28,19 +28,13 @@ public class ConnectionManager {
         connections.remove(username);
     }
 
-    public void broadcast(String excludeUsername, ServerMessage serverMessage) throws IOException {
-        var removeList = new ArrayList<Connection>();
+    public void broadcast(String username, ServerMessage serverMessage) throws IOException {
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
-                if (!c.username.equals(excludeUsername)) {
+                if (!c.username.equals(username)) {
                     c.send(new Gson().toJson(serverMessage));
                 }
-            } else {
-                removeList.add(c);
             }
-        }
-        for (var c :  removeList) {
-            connections.remove(c.username);
         }
     }
 

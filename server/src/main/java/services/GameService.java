@@ -1,5 +1,6 @@
 package services;
 
+import chess.ChessGame;
 import dataAccess.DataAccessException;
 import dataAccess.GameDAO;
 import models.Game;
@@ -50,6 +51,18 @@ public class GameService {
 
     public void getGame(String gameID) throws SQLException {
         gameDAO.getGame(Integer.valueOf(gameID));
+    }
+
+    public boolean isObserver(String gameID, String username) {
+        return gameDAO.isObserver(gameID, username);
+    }
+
+    public String getPlayerColor(String username, String gameID) {
+        return gameDAO.getPlayerColor(username, gameID);
+    }
+
+    public void makeMove(ChessGame game, String gameID) {
+        gameDAO.makeMove(game, gameID);
     }
 }
 

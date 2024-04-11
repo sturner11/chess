@@ -1,22 +1,17 @@
 package webSocketMessages.userCommands;
 
+import chess.ChessMove;
+
 public class MoveCommand extends UserGameCommand {
 
-    private String piecePosition;
-    private String desiredPosition;
-    public MoveCommand(String authToken, String username, String piecePosition, String desiredPosition) {
-        super(authToken, username);
-        this.piecePosition = piecePosition;
-        this.desiredPosition = desiredPosition;
+    ChessMove move;
+    public MoveCommand(String authToken, String gameID, ChessMove move) {
+        super(authToken, null, gameID);
+        this.move = move;
+
     }
 
-    @Override
-    public String getPiecePosition() {
-        return piecePosition;
-    }
-
-    @Override
-    public String getDesiredPosition() {
-        return desiredPosition;
+    public ChessMove getMove() {
+        return move;
     }
 }

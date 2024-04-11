@@ -1,10 +1,14 @@
 package dataAccess;
 
 import chess.ChessBoard;
+import chess.ChessGame;
+import chess.ChessMove;
+import com.google.gson.Gson;
 import models.Game;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static dataAccess.DatabaseManager.configureDatabase;
 
@@ -14,6 +18,7 @@ public class GameDAO implements DAO{
     public GameDAO() throws DataAccessException {
         configureDatabase();
     }
+
 
     public void clear(){
         if (isInitialized) {
@@ -35,15 +40,17 @@ public class GameDAO implements DAO{
             configureDatabase();
             isInitialized = true;
         }
+        ChessGame chessGame = new ChessGame();
         ChessBoard board = new ChessBoard();
         board.resetBoard();
-        String boardString = board.toString();
+        chessGame.setBoard(board);
+        String gameString = new Gson().toJson(chessGame);
         String sql ="INSERT INTO games (gameId, gameName, gameBoard) VALUES (NULL, ?, ?)";
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement
                     (sql); ) {
                 preparedStatement.setString(1, gameName);
-                preparedStatement.setString(2, boardString);
+                preparedStatement.setString(2, gameString);
                 var rs = preparedStatement.executeUpdate();
                 if (rs != 1){
                     throw new SQLException("Game creation failed");
@@ -209,6 +216,70 @@ public class GameDAO implements DAO{
                 var rs = preparedStatement.executeQuery();
                 rs.next();
                 return rs.getString(playerColor);
+            }
+        } catch (SQLException | DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean isObserver(String gameID, String username) {
+        boolean isObserver = true;
+        if (!isInitialized){
+            return false;
+        }
+        String[] colors = {"BLACK", "WHITE"};
+        for(int i = 0; i < 2; i++){
+            try (var conn = DatabaseManager.getConnection()) {
+                try (var preparedStatement = conn.prepareStatement
+                        ("SELECT " + colors[i] + " FROM games WHERE gameId = " + "'" + gameID + "'")) {
+                    var rs = preparedStatement.executeQuery();
+                    rs.next();
+                    if (Objects.equals(rs.getString(colors[i]), username)){
+                        isObserver = false;
+                        break;
+                    }
+
+                }
+            } catch (SQLException | DataAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return isObserver;
+    }
+
+    public String getPlayerColor(String username, String gameID) {
+        String playerColor = null;
+        String[] colors = {"BLACK", "WHITE"};
+        for (int i = 0; i < 2; i++) {
+            try (var conn = DatabaseManager.getConnection()) {
+                try (var preparedStatement = conn.prepareStatement
+                        ("SELECT " + colors[i] + " FROM games WHERE gameId = " + "'" + gameID + "'")) {
+                    var rs = preparedStatement.executeQuery();
+                    rs.next();
+                    if (Objects.equals(rs.getString(colors[i]), username)) {
+                        playerColor = colors[i];
+                        break;
+                    }
+
+                }
+            } catch (SQLException | DataAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return playerColor;
+    }
+
+    public void makeMove(ChessGame game, String gameID) {
+        String sql = "UPDATE games SET  gameBoard =" + "'" + game + "'" + "WHERE gameId = " + gameID;
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement
+                    (sql)) {
+                var rs = preparedStatement.executeUpdate();
+                if (rs != 1){
+                    throw new SQLException("User Removal failed");
+                }
             }
         } catch (SQLException | DataAccessException e) {
             throw new RuntimeException(e);
