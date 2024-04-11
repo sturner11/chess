@@ -76,7 +76,7 @@ public class WebSocketHandler {
             gameService.updateBoard(new Gson().toJson(game), command.getGameID());
             String gameString = gameService.getBoard(Integer.parseInt(command.getGameID()));
             var message = username + " has resigned. Coward. Thanks for playing!";
-            var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message,  gameString);
+            var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, command.getGameID(),  message);
             connections.sendAll(notification, command.getGameID());
         } catch (Exception e) {
             var message = "Could not Resign. Keep Fighting!";
@@ -132,8 +132,7 @@ public class WebSocketHandler {
         try {
             getValidData(command.getAuthString(), command.getGameID());
             var message = username + " has left the game";
-//        var notification = new Notification(Notification.Type.LEAVE, message, null, username, gameID);
-            var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message, command.getGameID());
+            var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, command.getGameID(), message);
             connections.broadcast(username, notification, command.getGameID());
             connections.remove(username, command.getGameID());
             gameService.removeUser(command.getGameID(), command.getPlayerColor());

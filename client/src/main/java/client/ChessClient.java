@@ -1,10 +1,12 @@
 package client;
 
 import chess.ChessGame;
+import chess.ChessPosition;
 import client.websocket.NotificationHandler;
 import client.websocket.WebSocketFacade;
 import com.google.gson.Gson;
 import ui.ChessBoardDisplay;
+import webSocketMessages.userCommands.UserGameCommand;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -57,7 +59,7 @@ public class ChessClient {
                     resign();
                     break;
                 case "highlight":
-//                    highlight(userArgs);
+                    highlight(userArgs[1]);
                     break;
             }
 
@@ -107,6 +109,14 @@ public class ChessClient {
         System.out.println();
     }
 
+    private void highlight(String chessPosition) {
+        Integer[] piecePositionInts = ws.positionConverter(chessPosition, playerColor);
+        ChessPosition startPosition = new ChessPosition(piecePositionInts[0], piecePositionInts[1]);
+        ChessGame chessGame = new Gson().fromJson(chessGameString, ChessGame.class);
+        var validMoves = chessGame.validMoves(startPosition);
+        ChessBoardDisplay.draw(chessGame.getBoard().toString(), playerColor, validMoves);
+    }
+
     private void resign() {
         ws.resign(gameID, playerColor, auth);
     }
@@ -146,7 +156,7 @@ public class ChessClient {
         if ( body != null && !body.isEmpty()){
             try {
                 playerColor = body.get("playerColor");
-                viewGame(body);
+                viewGame(body, UserGameCommand.CommandType.JOIN_PLAYER);
 
             } catch (Exception e) {
                 System.out.println("Could not join game. Please try again");
@@ -171,7 +181,7 @@ public class ChessClient {
         Map<String, String> body = createBody(userArgs, new String[] {"gameID"});
         if ( body != null && !body.isEmpty()){
             try {
-                viewGame(body);
+                viewGame(body, UserGameCommand.CommandType.JOIN_OBSERVER);
             } catch ( URISyntaxException | IOException e) {
             System.out.println("Could not observe game. Please try again.");
             }
@@ -180,18 +190,18 @@ public class ChessClient {
         }    
     }
 
-    public void viewGame(Map<String, String> body) throws URISyntaxException, IOException {
+    public void viewGame(Map<String, String> body, UserGameCommand.CommandType joinType) throws URISyntaxException, IOException {
         curlArgs = new String[]{"PUT", auth, URL + "game", body.toString()};
         Map resp = ClientCurl.makeReq(curlArgs);
         assert resp != null;
         gameID = body.get("gameID");
         ws = new WebSocketFacade(URL, notificationHandler);
-        ws.joinPlayer(body.get("gameID"), body.get("playerColor"), auth);
+        ws.joinPlayer(body.get("gameID"), body.get("playerColor"), auth, joinType);
     }
 
     public void gamePlayUI(String game, String playerColor) {
         ChessGame chessGame = new Gson().fromJson(game, ChessGame.class);
-        ChessBoardDisplay.draw(chessGame.getBoard().toString(), this.playerColor != null ? playerColor : "WHITE");
+        ChessBoardDisplay.draw(chessGame.getBoard().toString(), this.playerColor != null ? playerColor : "WHITE", null);
 
         printPrompt();
         chessUI = true;

@@ -75,10 +75,10 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    public void leave(String gameID, String playerColor, String auth){
+    public void leave(String auth, String playerColor, String gameID){
         try {
             var action = new UserGameCommand(auth, playerColor, gameID);
-            action.setCommandType(RESIGN);
+            action.setCommandType(LEAVE);
             this.session.getBasicRemote().sendText(new Gson().toJson(action));
         } catch (IOException ex) {
             var test = ex;
@@ -86,10 +86,10 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    public void joinPlayer(String gameID, String playerColor, String auth) throws IOException {
+    public void joinPlayer(String gameID, String playerColor, String auth, UserGameCommand.CommandType joinType) throws IOException {
         try {
         var action = new UserGameCommand(auth, playerColor, gameID);
-        action.setCommandType(JOIN_PLAYER);
+        action.setCommandType(joinType);
         this.session.getBasicRemote().sendText(new Gson().toJson(action));
         } catch (IOException ex) {
             var test = ex;
@@ -113,7 +113,7 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    private Integer[] positionConverter(String piecePosition, String playerColor) {
+    public Integer[] positionConverter(String piecePosition, String playerColor) {
         HashMap<Character, Integer> letterNumberMap = new HashMap<>();
 
         // Loop through the first 10 letters (A-J) and add them to the map
