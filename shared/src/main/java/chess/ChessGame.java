@@ -13,9 +13,11 @@ import java.util.Objects;
 public class ChessGame {
     ChessBoard board;
     TeamColor teamTurn;
+    Boolean isFinished = false;
+
     public ChessGame() {
         this.board = new ChessBoard();
-        this.teamTurn = null;
+        this.teamTurn = TeamColor.WHITE;
     }
 
     /**
@@ -31,6 +33,10 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {this.teamTurn = team;}
+
+    public void resign() {
+        this.isFinished = true;
+    }
 
     /**
      * Enum identifying the 2 possible teams in a chess game
@@ -49,6 +55,9 @@ public class ChessGame {
         ChessPiece piece = this.board.getBoard()[startPosition.getRow() - 1][startPosition.getColumn() - 1];
         if (color == null){ // in Some test they forget to set Whose turn it is.
             color = piece.getTeamColor();
+        }
+        if (color != teamTurn || isFinished){
+            return validMoves;
         }
         if (piece != null && piece.getTeamColor() == color) {
             Collection<ChessMove> moves = piece.pieceMoves(board, startPosition);
@@ -175,6 +184,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
+        isFinished = true;
         return isInCheck(teamColor) && noSafeMoves(teamColor);
     }
 
@@ -202,7 +212,9 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
+
         if (!isInCheck(teamColor)) {
+            isFinished = true;
             return !possibleToMove(teamColor);
         }
        return false;

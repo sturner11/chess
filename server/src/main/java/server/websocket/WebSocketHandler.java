@@ -6,7 +6,6 @@ import chess.ChessMove;
 import com.google.gson.Gson;
 import dataAccess.DataAccessException;
 import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import services.GameService;
@@ -47,6 +46,9 @@ public class WebSocketHandler {
                     MoveCommand move = new Gson().fromJson(message, MoveCommand.class);
                     move(session, move.getMove(), command.getGameID(), command.getAuthString());
                     break;
+                case RESIGN:
+                    resign(session, command);
+                    break;
                 case LEAVE:
 //                leave(command.getGameID(), command.getPlayerColor());
                     break;
@@ -59,10 +61,22 @@ public class WebSocketHandler {
 
     }
 
-//    @OnWebSocketError
-//    public void onError(Session session, Throwable cause){
-//        System.out.println(cause.getMessage());
-//    }
+    private void resign(Session session, UserGameCommand command) throws IOException {
+        try {
+            this.playerColor = command.getPlayerColor();
+            ChessGame game =  new Gson().fromJson(gameService.getBoard(Integer.parseInt(command.getGameID())), ChessGame.class);
+            game.resign();
+            gameService.updateBoard(game, command.getGameID());
+            String gameString = gameService.getBoard(Integer.parseInt(command.getGameID()));
+            var message = username + " has resigned. Coward. Thanks for playing!";
+            var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message,  gameString);
+            connections.sendAll(notification);
+        } catch (Exception e) {
+            var message = "Could not Resign. Keep Fighting!";
+            sendError(session, message);
+        }
+    }
+
 
     private void joinPlayer(Session session, String playerColor, String gameID, String auth) throws IOException {
         try {
@@ -84,7 +98,7 @@ public class WebSocketHandler {
             ChessGame game =  new Gson().fromJson(gameService.getBoard(Integer.parseInt(gameID)), ChessGame.class);
             if (isValidMove(move, gameID, playerColor, game)) {
                 game.makeMove(move);
-                gameService.makeMove(game, gameID);
+                gameService.updateBoard(game, gameID);
                 String message = username + " moves " + move.getStartPosition().toString() + " to " + move.getEndPosition().toString();
                 String gameString =  gameService.getBoard(Integer.parseInt(gameID));
                 var loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, message,  gameString);

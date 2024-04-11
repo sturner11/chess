@@ -61,8 +61,8 @@ public class GameService {
         return gameDAO.getPlayerColor(username, gameID);
     }
 
-    public void makeMove(ChessGame game, String gameID) {
-        gameDAO.makeMove(game, gameID);
+    public void updateBoard(ChessGame game, String gameID) {
+        gameDAO.updateBoard(game, gameID);
     }
 }
 

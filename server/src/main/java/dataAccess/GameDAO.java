@@ -2,7 +2,6 @@ package dataAccess;
 
 import chess.ChessBoard;
 import chess.ChessGame;
-import chess.ChessMove;
 import com.google.gson.Gson;
 import models.Game;
 
@@ -271,7 +270,7 @@ public class GameDAO implements DAO{
         return playerColor;
     }
 
-    public void makeMove(ChessGame game, String gameID) {
+    public void updateBoard(ChessGame game, String gameID) {
         String sql = "UPDATE games SET  gameBoard =" + "'" + game + "'" + "WHERE gameId = " + gameID;
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement
