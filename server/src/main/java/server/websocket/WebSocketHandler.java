@@ -73,11 +73,12 @@ public class WebSocketHandler {
             String gameString =  gameService.getBoard(Integer.parseInt(gameID));
             sendMessage(gameString, message, gameID);
         } catch (Exception e) {
-           sendError(session);
+            var message = "Could not join game";
+           sendError(session, message);
         }
     }
 
-    private void move(Session session, ChessMove move, String gameID, String auth) {
+    private void move(Session session, ChessMove move, String gameID, String auth) throws IOException {
         try {
             getValidData(auth, gameID);
             ChessGame game =  new Gson().fromJson(gameService.getBoard(Integer.parseInt(gameID)), ChessGame.class);
@@ -90,11 +91,13 @@ public class WebSocketHandler {
                 connections.sendAll(loadGame);
                 var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message,  gameString);
                 connections.broadcast(username, notification);
+            } else {
+                throw new Exception();
             }
 
         } catch (Exception e) {
-//            var test = e;
-//            System.out.println(e);
+            var message = "Invald move";
+            sendError(session, message);
         }
     }
 
@@ -152,9 +155,8 @@ public class WebSocketHandler {
         connections.broadcast(username, notification);
     }
 
-    private void sendError(Session session) throws IOException {
+    private void sendError(Session session, String message) throws IOException {
         connections.add(username, session);
-        var message = "Could not join game";
         var serverMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, null, message);
         connections.send(username, serverMessage);
         connections.remove(username);
