@@ -55,4 +55,8 @@ public class UserService {
             throw new DataAccessException("error", 401);
         }
     }
+
+    public String getUser(String auth) throws SQLException {
+        return authDAO.checkAuth(auth);
+    }
 }
