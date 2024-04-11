@@ -53,6 +53,7 @@ public class WebSocketHandler {
                 leave(session, command);
                     break;
             }
+            type = null; username = null; playerColor = null;
 
         } catch (Exception e){
 //            var test = e;

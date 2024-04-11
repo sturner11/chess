@@ -50,7 +50,6 @@ public class WebSocketFacade extends Endpoint {
                         case ERROR:
                             notificationHandler.notify(new Gson().fromJson(s, ErrorMessage.class));
                     }
-                    notificationHandler.notify(serverMessage);
                 }
             });
         } catch (URISyntaxException | RuntimeException | IOException | DeploymentException e) {
