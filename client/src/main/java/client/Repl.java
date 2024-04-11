@@ -45,6 +45,7 @@ public class Repl implements NotificationHandler {
                     break;
                 case ServerMessage.ServerMessageType.LOAD_GAME:
                     client.gamePlayUI(message.getGame(), message.getPlayerColor());
+                    client.setChessGame( message.getGame());
                     break;
                 case ServerMessage.ServerMessageType.ERROR:
                     System.out.println( ((ErrorMessage) message).getErrorMessage());

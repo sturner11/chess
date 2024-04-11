@@ -1,7 +1,6 @@
 package client;
 
 import com.google.gson.Gson;
-import dataAccess.DataAccessException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,7 +11,7 @@ import java.net.URISyntaxException;
 import java.util.Map;
 
 public class ClientCurl {
-    public static Map makeReq(String[] args) throws DataAccessException, URISyntaxException, IOException {
+    public static Map makeReq(String[] args) throws URISyntaxException, IOException {
         if (args.length >= 2) {
             var method = args[0];
             var auth = args[1];

@@ -30,6 +30,8 @@ public class ChessClient {
     private boolean chessUI = false;
     private String gameID;
 
+    private String chessGameString;
+
     public ChessClient(int port, String serverUrl, NotificationHandler notificationHandler) {
         this.notificationHandler = notificationHandler;
         URL = serverUrl + port +"/";
@@ -45,7 +47,7 @@ public class ChessClient {
                     help();
                     break;
                 case "redraw":
-                    gamePlayUI(gameID, playerColor);
+                    gamePlayUI(chessGameString, playerColor);
                     break;
                 case "leave":
                     leave();
@@ -329,5 +331,9 @@ public class ChessClient {
     public void clearAuth() {
         auth = null;
         loggedIn = false;
+    }
+
+    public void setChessGame( String game) {
+        chessGameString = game;
     }
 }

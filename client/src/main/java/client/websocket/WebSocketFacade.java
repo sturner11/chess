@@ -1,5 +1,7 @@
 package client.websocket;
 
+import chess.ChessBoard;
+import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 import com.google.gson.Gson;
@@ -22,6 +24,7 @@ import static webSocketMessages.userCommands.UserGameCommand.CommandType.*;
 public class WebSocketFacade extends Endpoint {
     Session session;
     NotificationHandler notificationHandler;
+    ChessGame game;
 
     public WebSocketFacade(String url, NotificationHandler notificationHandler) {
         try {
@@ -37,8 +40,15 @@ public class WebSocketFacade extends Endpoint {
                     ServerMessage serverMessage = new Gson().fromJson(s, ServerMessage.class);
                     ServerMessage.ServerMessageType type = serverMessage.getServerMessageType();
                     switch (type){
-                        case LOAD_GAME, NOTIFICATION -> notificationHandler.notify(serverMessage);
-                        case ERROR -> notificationHandler.notify(new Gson().fromJson(s, ErrorMessage.class));
+                        case LOAD_GAME:
+                            notificationHandler.notify(serverMessage);
+                            game = new Gson().fromJson(serverMessage.getGame(), ChessGame.class);
+                            break;
+                        case NOTIFICATION:
+                            notificationHandler.notify(serverMessage);
+                            break;
+                        case ERROR:
+                            notificationHandler.notify(new Gson().fromJson(s, ErrorMessage.class));
                     }
                     notificationHandler.notify(serverMessage);
                 }
