@@ -1,6 +1,7 @@
 package client;
 
 import client.websocket.NotificationHandler;
+import webSocketMessages.serverMessages.ErrorMessage;
 import webSocketMessages.serverMessages.ServerMessage;
 
 import java.util.Objects;
@@ -46,7 +47,7 @@ public class Repl implements NotificationHandler {
                     client.gamePlayUI(message.getGame(), message.getPlayerColor());
                     break;
                 case ServerMessage.ServerMessageType.ERROR:
-                    System.out.println(message.getMessage());
+                    System.out.println( ((ErrorMessage) message).getErrorMessage());
             }
 
         } catch(Error e){

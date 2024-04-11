@@ -21,7 +21,7 @@ public class ClientCurl {
             HttpURLConnection http = sendRequest(url, auth, method, body);
             return receiveResponse(http);
         } else {
-            //TODO: What do I do here?
+
         }
         return null;
     }

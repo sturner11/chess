@@ -54,7 +54,7 @@ public class ChessClient {
                     move(userArgs);
                     break;
                 case "resign":
-//                    resign();
+                    resign();
                     break;
                 case "highlight":
 //                    highlight(userArgs);
@@ -107,9 +107,13 @@ public class ChessClient {
         System.out.println();
     }
 
+    private void resign() {
+        ws.resign(gameID, playerColor, auth);
+    }
+
     private void move(String[] userArgs) {
         if (userArgs.length == 3) {
-                ws.makeMove(userArgs[1], userArgs[2], auth, username);
+                ws.makeMove(userArgs[1], userArgs[2], auth, gameID);
 
         } else {
             System.out.println("Please enter the correct amount of arguments for command: " + userArgs[0]);
@@ -119,10 +123,10 @@ public class ChessClient {
     }
 
     private void leave() {
+        ws.leave(auth, playerColor, gameID);
         playerColor = null;
         gameID = null;
         chessUI = false;
-        ws.leave(auth, username, playerColor, gameID);
     }
 
     public void logout() {
@@ -181,8 +185,7 @@ public class ChessClient {
         assert resp != null;
         gameID = body.get("gameID");
         ws = new WebSocketFacade(URL, notificationHandler);
-        ws.joinPlayer(body.get("gameID"), username, body.get("playerColor"), auth);
-//        gamePlayUI(body.get("gameID"), body.get("playerColor"));
+        ws.joinPlayer(body.get("gameID"), body.get("playerColor"), auth);
     }
 
     public void gamePlayUI(String game, String playerColor) {

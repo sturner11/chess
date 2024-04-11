@@ -115,7 +115,7 @@ public class WebSocketHandler {
             }
 
         } catch (Exception e) {
-            var message = "Invald move";
+            var message = "Invalid move";
             sendError(session, message, gameID);
         }
     }
@@ -182,7 +182,7 @@ public class WebSocketHandler {
 
     private void sendError(Session session, String message, String gameID) throws IOException {
         connections.add(username, session, gameID);
-        var serverMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, null, message);
+        var serverMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
         connections.send(username, serverMessage,gameID);
         connections.remove(username, gameID);
     }
