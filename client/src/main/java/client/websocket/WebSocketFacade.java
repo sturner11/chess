@@ -66,25 +66,21 @@ public class WebSocketFacade extends Endpoint {
 
 
     public void resign(String gameID, String playerColor, String auth) {
-        try {
-            var action = new UserGameCommand(auth, playerColor, gameID);
-            action.setCommandType(RESIGN);
-            this.session.getBasicRemote().sendText(new Gson().toJson(action));
-        } catch (IOException ex) {
-            var test = ex;
-//            throw new Exception(500, ex.getMessage()); TODO
-        }
+        end(auth, playerColor, gameID, RESIGN);
     }
 
-    public void leave(String auth, String playerColor, String gameID){
+    public void end(String auth, String playerColor, String gameID, UserGameCommand.CommandType type)
+    {
         try {
             var action = new UserGameCommand(auth, playerColor, gameID);
-            action.setCommandType(LEAVE);
+            action.setCommandType(type);
             this.session.getBasicRemote().sendText(new Gson().toJson(action));
         } catch (IOException ex) {
-            var test = ex;
-//            throw new Exception(500, ex.getMessage()); TODO
+            System.out.println();
         }
+    }
+    public void leave(String auth, String playerColor, String gameID){
+        end(auth, playerColor, gameID, LEAVE);
     }
 
     public void joinPlayer(String gameID, String playerColor, String auth, UserGameCommand.CommandType joinType) throws IOException {
@@ -93,8 +89,7 @@ public class WebSocketFacade extends Endpoint {
         action.setCommandType(joinType);
         this.session.getBasicRemote().sendText(new Gson().toJson(action));
         } catch (IOException ex) {
-            var test = ex;
-//            throw new Exception(500, ex.getMessage()); TODO
+            System.out.println();
         }
     }
 
@@ -110,7 +105,7 @@ public class WebSocketFacade extends Endpoint {
             action.setCommandType(MAKE_MOVE);
             this.session.getBasicRemote().sendText(new Gson().toJson(action));
         } catch (IOException ex) {
-//            throw new Exception(500, ex.getMessage()); TODO
+            System.out.println();
         }
     }
 

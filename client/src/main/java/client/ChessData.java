@@ -9,10 +9,6 @@ public record ChessData(String playerColor, String message, String username) {
         return playerColor;
     }
 
-//    @Override
-//    public String chessBoard() {
-//        return chessBoard;
-//    }
 
     @Override
     public String message() {
