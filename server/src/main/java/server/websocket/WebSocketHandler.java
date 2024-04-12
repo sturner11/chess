@@ -69,6 +69,9 @@ public class WebSocketHandler {
             }
             this.playerColor = command.getPlayerColor();
             ChessGame game =  new Gson().fromJson(gameService.getBoard(Integer.parseInt(command.getGameID())), ChessGame.class);
+            if (game.getIsFinished()){
+                throw new Exception();
+            }
             game.resign();
             gameService.updateBoard(new Gson().toJson(game), command.getGameID());
             var message = username + " has resigned. Coward. Thanks for playing!";
@@ -114,7 +117,6 @@ public class WebSocketHandler {
                 String gameString =  gameService.getBoard(Integer.parseInt(gameID));
                 var loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameString, message, playerColor);
                 connections.sendAll(loadGame, gameID);
-//                var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, gameID, message);
                 var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, gameID,  message);
                 connections.broadcast(username, notification, gameID);
             } else {

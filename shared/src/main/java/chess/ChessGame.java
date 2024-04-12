@@ -38,6 +38,10 @@ public class ChessGame {
         this.isFinished = true;
     }
 
+    public boolean getIsFinished() {
+        return this.isFinished;
+    }
+
     /**
      * Enum identifying the 2 possible teams in a chess game
      */
@@ -98,6 +102,9 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) { // Parameter Overloading because they won't
         // let us change headers
+        if (isFinished){
+            return null;
+        }
         return validMoves(startPosition, this.teamTurn);
     }
 
