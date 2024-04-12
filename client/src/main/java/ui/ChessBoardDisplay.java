@@ -3,38 +3,27 @@ package ui;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-
-import chess.ChessMove;
-
 import static java.lang.System.out;
 import static ui.EscapeSequences.*;
 
 public class ChessBoardDisplay {
 
     private static final int BOARD_SIZE_IN_SQUARES = 10;
-    private static final int SQUARE_SIZE_IN_CHARS = 1;
-    private  final int LINE_WIDTH_IN_CHARS = 1;
     private static String[]headers;
 
     private static String[]rowVals;
 
     private static List<String[]> chessBoard = new ArrayList<>();
-    private static String boardColor;
-
     private static String blackBG;
 
     private static String blackT;
     private static String whiteBG;
     private static String whiteT;
 
-    public static void draw(String board, String color, Collection<ChessMove> validMoves) {
-        boardColor = color;
+    public static void draw(String board, String color) {
         chessBoard = new ArrayList<>();
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-//        ChessBoard board = new ChessBoard();
-//        board.resetBoard();
-//        board = board.toString();
-//        args = new String[]{"R,N,B,Q,K,B,N,R;P,P,P,P,P,P,P,P; , , , , , , , ; , , , , , , , ; , , , , , , , ; , , , , , , , ;p,p,p,p,p,p,p,p;r,n,b,q,k,b,n,r;"};
+
         String[] rows = board.split(";");
         for (String row : rows) {
             String[] rowList = row.split(",");
@@ -58,11 +47,10 @@ public class ChessBoardDisplay {
             blackT = SET_TEXT_COLOR_WHITE;
                 List<String> list = Arrays.asList(headers);
                 Collections.reverse(list);
-                headers = list.toArray(new String[list.size()]);
+                headers = list.toArray(new String[0]);
                 list = Arrays.asList(rowVals);
                 Collections.reverse(list);
-                rowVals = list.toArray(new String[list.size()]);
-                List<String[]> oldBoard = chessBoard;
+                rowVals = list.toArray(new String[0]);
                 chessBoard = chessBoard.reversed();
             } else {
             whiteBG = SET_BG_COLOR_WHITE;
@@ -95,8 +83,6 @@ public class ChessBoardDisplay {
     }
 
     private static void drawHeader(PrintStream out, String header) {
-        int prefixLength = SQUARE_SIZE_IN_CHARS;
-        int suffixLength = SQUARE_SIZE_IN_CHARS;
 
         out.print(PRE_SPACE);
         out.print(header);
@@ -159,27 +145,15 @@ public class ChessBoardDisplay {
     private static String getChessUnicode(String piece) {
 
 
-        switch (piece) {
-            case "p":
-            case "P":
-                return piece.toLowerCase().equals(piece) ? BLACK_PAWN : WHITE_PAWN;
-            case "r":
-            case "R":
-                return piece.toLowerCase().equals(piece) ? BLACK_ROOK : WHITE_ROOK;
-            case "n":
-            case "N":
-                return piece.toLowerCase().equals(piece) ? BLACK_KNIGHT : WHITE_KNIGHT;
-            case "b":
-            case "B":
-                return piece.toLowerCase().equals(piece) ? BLACK_BISHOP : WHITE_BISHOP;
-            case "k":
-            case "K":
-                return piece.toLowerCase().equals(piece) ? BLACK_KING : WHITE_KING;
-            case "q":
-            case "Q":
-                return piece.toLowerCase().equals(piece) ? BLACK_QUEEN : WHITE_QUEEN;
-        }
-        return EMPTY.repeat(1);
+        return switch (piece) {
+            case "p", "P" -> piece.toLowerCase().equals(piece) ? BLACK_PAWN : WHITE_PAWN;
+            case "r", "R" -> piece.toLowerCase().equals(piece) ? BLACK_ROOK : WHITE_ROOK;
+            case "n", "N" -> piece.toLowerCase().equals(piece) ? BLACK_KNIGHT : WHITE_KNIGHT;
+            case "b", "B" -> piece.toLowerCase().equals(piece) ? BLACK_BISHOP : WHITE_BISHOP;
+            case "k", "K" -> piece.toLowerCase().equals(piece) ? BLACK_KING : WHITE_KING;
+            case "q", "Q" -> piece.toLowerCase().equals(piece) ? BLACK_QUEEN : WHITE_QUEEN;
+            default -> EMPTY.repeat(1);
+        };
     }
 
     private static void setGray(PrintStream out) {

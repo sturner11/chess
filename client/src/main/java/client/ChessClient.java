@@ -1,7 +1,6 @@
 package client;
 
 import chess.ChessGame;
-import chess.ChessPosition;
 import client.websocket.NotificationHandler;
 import client.websocket.WebSocketFacade;
 import com.google.gson.Gson;
@@ -17,7 +16,7 @@ import static java.awt.Color.GREEN;
 import static org.glassfish.grizzly.Interceptor.RESET;
 
 public class ChessClient {
-    private final String URL;
+    private final String url;
     private  String auth;
     private  String[] curlArgs;
     private  boolean loggedIn = false;
@@ -34,7 +33,7 @@ public class ChessClient {
 
     public ChessClient(int port, String serverUrl, NotificationHandler notificationHandler) {
         this.notificationHandler = notificationHandler;
-        URL = serverUrl + port +"/";
+        url = serverUrl + port +"/";
 
     }
 
@@ -110,11 +109,8 @@ public class ChessClient {
     }
 
     private void highlight(String chessPosition) {
-        Integer[] piecePositionInts = ws.positionConverter(chessPosition, playerColor);
-        ChessPosition startPosition = new ChessPosition(piecePositionInts[0], piecePositionInts[1]);
         ChessGame chessGame = new Gson().fromJson(chessGameString, ChessGame.class);
-        var validMoves = chessGame.validMoves(startPosition);
-        ChessBoardDisplay.draw(chessGame.getBoard().toString(), playerColor, validMoves);
+        ChessBoardDisplay.draw(chessGame.getBoard().toString(), playerColor);
     }
 
     private void resign() {
@@ -142,7 +138,7 @@ public class ChessClient {
 
     public void logout() {
         try {
-            curlArgs = new String[]{"DELETE", auth, URL + "session"};
+            curlArgs = new String[]{"DELETE", auth, url + "session"};
             ClientCurl.makeReq(curlArgs);
             loggedIn = false;
             auth = null;
@@ -191,17 +187,17 @@ public class ChessClient {
     }
 
     public void viewGame(Map<String, String> body, UserGameCommand.CommandType joinType) throws URISyntaxException, IOException {
-        curlArgs = new String[]{"PUT", auth, URL + "game", body.toString()};
+        curlArgs = new String[]{"PUT", auth, url + "game", body.toString()};
         Map resp = ClientCurl.makeReq(curlArgs);
         assert resp != null;
         gameID = body.get("gameID");
-        ws = new WebSocketFacade(URL, notificationHandler);
+        ws = new WebSocketFacade(url, notificationHandler);
         ws.joinPlayer(body.get("gameID"), body.get("playerColor"), auth, joinType);
     }
 
     public void gamePlayUI(String game, String playerColor) {
         ChessGame chessGame = new Gson().fromJson(game, ChessGame.class);
-        ChessBoardDisplay.draw(chessGame.getBoard().toString(), this.playerColor != null ? playerColor : "WHITE", null);
+        ChessBoardDisplay.draw(chessGame.getBoard().toString(), this.playerColor != null ? playerColor : "WHITE");
 
         printPrompt();
         chessUI = true;
@@ -212,7 +208,7 @@ public class ChessClient {
     }
     public  void listGames() {
         try {
-            curlArgs = new String[]{"GET", auth, URL + "game"};
+            curlArgs = new String[]{"GET", auth, url + "game"};
             Map<String, ArrayList<Map<String, Object>>> resp =  ClientCurl.makeReq(curlArgs);
             assert resp != null;
             ArrayList<Map<String, Object>> games = resp.get("games");
@@ -234,7 +230,7 @@ public class ChessClient {
         Map<String, String> body = createBody(userArgs, new String[] {"gameName"});
         if ( body != null && !body.isEmpty()){
             try {
-                curlArgs = new String[]{"POST", auth, URL + "game", body.toString()};
+                curlArgs = new String[]{"POST", auth, url + "game", body.toString()};
                 ClientCurl.makeReq(curlArgs);
                 System.out.println("Game successfully made. Use join command to start game");
             } catch (Exception e) {
@@ -248,7 +244,7 @@ public class ChessClient {
     public  void login(String[] userArgs) {
         Map<String, String> body = createBody(userArgs, new String[] {"username", "password"});
         if ( body != null && !body.isEmpty()){
-            curlArgs = new String[]{"POST", null, URL + "session", body.toString()};
+            curlArgs = new String[]{"POST", null, url + "session", body.toString()};
             try {
                 Map resp = ClientCurl.makeReq(curlArgs);
                 assert resp != null;
@@ -266,7 +262,7 @@ public class ChessClient {
     public void user( String[] userArgs) {
         Map<String, String> body = createBody(userArgs, new String[] {"username", "password", "email"});
         if ( body != null && !body.isEmpty()){
-            curlArgs = new String[]{"POST", null, URL + "user", body.toString()};
+            curlArgs = new String[]{"POST", null, url + "user", body.toString()};
             try {
                 Map resp = ClientCurl.makeReq(curlArgs);
                 System.out.println("User Registered! Please type help to continue");

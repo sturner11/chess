@@ -46,19 +46,9 @@ public class ChessGame {
         BLACK
     }
 
-    public Collection<ChessMove> validMoves(ChessPosition startPosition, ChessGame.TeamColor color) {
-
-        Collection<ChessMove> validMoves = new HashSet<ChessMove>();
-        if (color != teamTurn){
-            return validMoves;
-        }
+    public Collection<ChessMove> possibleMoves(ChessPosition startPosition, ChessGame.TeamColor color){
+        Collection<ChessMove> validMoves = new HashSet<>();
         ChessPiece piece = this.board.getBoard()[startPosition.getRow() - 1][startPosition.getColumn() - 1];
-        if (color == null){ // in Some test they forget to set Whose turn it is.
-            color = piece.getTeamColor();
-        }
-        if (color != teamTurn || isFinished){
-            return validMoves;
-        }
         if (piece != null && piece.getTeamColor() == color) {
             Collection<ChessMove> moves = piece.pieceMoves(board, startPosition);
             for (ChessMove move : moves) {
@@ -85,6 +75,18 @@ public class ChessGame {
             }
         }
         return validMoves;
+    }
+    public Collection<ChessMove> validMoves(ChessPosition startPosition, ChessGame.TeamColor color) {
+        ChessPiece piece = this.board.getBoard()[startPosition.getRow() - 1][startPosition.getColumn() - 1];
+        if (color == null){ // in Some test they forget to set Whose turn it is.
+            color = piece.getTeamColor();
+        }
+        Collection<ChessMove> validMoves = new HashSet<>();
+        if (color != teamTurn){
+            return validMoves;
+        }
+        return possibleMoves(startPosition, color);
+
     }
 
     /**
@@ -228,7 +230,7 @@ public class ChessGame {
                 if (piece != null &&
                         piece.getTeamColor() == teamColor){
                     ChessPosition piecePosition = new ChessPosition(i, j);
-                    Collection<ChessMove> moves = validMoves(piecePosition, teamColor);
+                    Collection<ChessMove> moves = possibleMoves(piecePosition, teamColor);
                     if (!moves.isEmpty()){
                         possibleToMove = true;
                     }

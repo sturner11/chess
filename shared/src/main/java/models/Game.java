@@ -2,7 +2,7 @@ package models;
 
 
 import java.util.Objects;
-import com.google.gson.internal.LinkedTreeMap;
+
 
 public class Game {
     final String gameName;
@@ -43,33 +43,15 @@ public class Game {
         this.blackUsername = null;
     }
 
-
-
-
-
     public void setWhiteUsername(String whiteUsername) {
         this.whiteUsername = whiteUsername;
     }
-
-
 
     public Integer gameID() {
         return gameID;
     }
     public String gameName() {return gameName;}
-    public String whiteUsername() {return whiteUsername;}
-    public String blackUsername() { return blackUsername;}
 
-
-
-
-    public boolean isAvailable(String playerColor) {
-        if (Objects.equals(playerColor, "White")){
-            return whiteUsername == null;
-        } else {
-            return blackUsername == null;
-        }
-    }
 
     public void setColor(String playerColor, String userName) {
         if (Objects.equals(playerColor, "WHITE")){

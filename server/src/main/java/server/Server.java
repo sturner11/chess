@@ -8,8 +8,6 @@ import server.websocket.WebSocketHandler;
 import services.GameService;
 import services.UserService;
 import spark.*;
-
-import javax.xml.crypto.Data;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Map;
@@ -25,13 +23,14 @@ public class Server {
         try {
             webSocketHandler = new WebSocketHandler();
         } catch (DataAccessException e){
+
             System.out.println(e);
         }
         try {
             this.userService = new UserService();
             this.gameService = new GameService();
         } catch(DataAccessException e){
-            return; // TODO: FIX Error
+            System.out.println(e);
         }
     }
 
@@ -61,6 +60,10 @@ public class Server {
     }
 
     private Object move(Request request, Response response) {
+        return getObject(request, response);
+    }
+
+    private Object getObject(Request request, Response response) {
         try {
             var body = new Gson().fromJson(request.body(), GameBody.class);
             userService.checkAuth(request.headers("Authorization"));
@@ -76,18 +79,7 @@ public class Server {
     }
 
     private Object getBoard(Request request, Response response) {
-        try {
-            var body = new Gson().fromJson(request.body(), GameBody.class);
-            userService.checkAuth(request.headers("Authorization"));
-            String gameBoard = gameService.getBoard(body.gameID());
-            response.status(200);
-            return new Gson().toJson(Map.of("gameBoard", gameBoard, "playerColor", body.playerColor() != null ? body.playerColor(): "WHITE", "gameID", body.gameID()));
-        } catch(DataAccessException e){
-            response.status(e.getStatus());
-            return new Gson().toJson(new ErrorMessage(e.getMessage()));
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        return getObject(request, response);
     }
 
     private Object listGame(Request request, Response response) {
@@ -168,7 +160,6 @@ public class Server {
             response.type("application/json");
             return new Gson().toJson(new Auth(body.username(), authToken));
         } catch(DataAccessException e) {
-            int check = e.getStatus();
             response.status(e.getStatus());
             return new Gson().toJson(new ErrorMessage(e.getMessage()));
         } catch (SQLException e) {

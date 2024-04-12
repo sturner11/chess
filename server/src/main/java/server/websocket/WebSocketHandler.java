@@ -1,7 +1,6 @@
 package server.websocket;
 
 
-import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessMove;
 import com.google.gson.Gson;
@@ -15,9 +14,7 @@ import webSocketMessages.serverMessages.ErrorMessage;
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userCommands.MoveCommand;
 import webSocketMessages.userCommands.UserGameCommand;
-
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Objects;
 
 @WebSocket
@@ -74,7 +71,6 @@ public class WebSocketHandler {
             ChessGame game =  new Gson().fromJson(gameService.getBoard(Integer.parseInt(command.getGameID())), ChessGame.class);
             game.resign();
             gameService.updateBoard(new Gson().toJson(game), command.getGameID());
-            String gameString = gameService.getBoard(Integer.parseInt(command.getGameID()));
             var message = username + " has resigned. Coward. Thanks for playing!";
             var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, command.getGameID(),  message);
             connections.sendAll(notification, command.getGameID());
@@ -103,17 +99,15 @@ public class WebSocketHandler {
         try {
             getValidData(auth, gameID);
             ChessGame game =  new Gson().fromJson(gameService.getBoard(Integer.parseInt(gameID)), ChessGame.class);
-            if (isValidMove(move, gameID, playerColor, game)) {
+            if (isValidMove(move, playerColor, game)) {
                 game.makeMove(move);
                 gameService.updateBoard(new Gson().toJson(game), gameID);
                 String ischeck = "";
                 if (game.isInCheck(game.getTeamTurn())){
                     ischeck = "CHECK";                    
-                }
-                if (game.isInCheckmate(game.getTeamTurn())){
+                } else if (game.isInCheckmate(game.getTeamTurn())){
                     ischeck = "CHECKMATE";
-                }
-                if(game.isInStalemate(game.getTeamTurn())){
+                } else if(game.isInStalemate(game.getTeamTurn())){
                     ischeck = "STALEMATE";
                 }
                 String message = username + " moves " + move.getStartPosition().getRow() + "," + move.getStartPosition().getColumn() + " to " + move.getEndPosition().getRow() + "," + move.getEndPosition().getColumn() + " " + ischeck;
@@ -134,7 +128,7 @@ public class WebSocketHandler {
     }
 
 
-    private boolean isValidMove(ChessMove move, String gameID, String playerColor, ChessGame game) throws SQLException {
+    private boolean isValidMove(ChessMove move, String playerColor, ChessGame game) {
         return game.validMoves(move.getStartPosition(), ChessGame.TeamColor.valueOf(playerColor)).contains(move);
     }
 
@@ -172,7 +166,7 @@ public class WebSocketHandler {
         gameService.getGame(gameID);
     }
 
-    private String checkUser(String username, String gameID) throws Exception {
+    private String checkUser(String username, String gameID) {
         if (this.playerColor == null) {
             playerColor = gameService.getPlayerColor(username, gameID);
         }
