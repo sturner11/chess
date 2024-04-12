@@ -69,7 +69,7 @@ public class GameDAO implements DAO{
         if (gameExists(gameId)){
             Game game = getGame(gameId);
             if (playerColor != null) {
-                if (teamAvailable(playerColor, gameId)) {
+                if (teamAvailable(playerColor, gameId, username)) {
                     game.setColor(playerColor, username);
                     setColor(gameId, username, playerColor);
                     return game;
@@ -85,14 +85,15 @@ public class GameDAO implements DAO{
         }
     }
 
-    private boolean teamAvailable(String playerColor, Integer gameId) throws SQLException, DataAccessException {
+    private boolean teamAvailable(String playerColor, Integer gameId, String username) throws SQLException, DataAccessException {
         boolean isAvailable;
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement
                     ("SELECT " + playerColor + " FROM games WHERE gameId = " + "'" + gameId + "'")) {
                 var rs = preparedStatement.executeQuery();
                 rs.next();
-                isAvailable = rs.getString(playerColor) == null;
+                String check = rs.getString(playerColor);
+                isAvailable = check == null || check.equals(username) || check.equals("AVAILABLE");
             }
         } catch (SQLException | DataAccessException e) {
             throw new RuntimeException(e);
@@ -194,7 +195,7 @@ public class GameDAO implements DAO{
     }
 
     public void removeUser(String gameID, String playerColor) {
-        String sql = "UPDATE games SET " + playerColor + "=" + "'" + null + "'" + "WHERE gameId =   " + gameID;
+        String sql = "UPDATE games SET " + playerColor + "=" + "'" + "AVAILABLE" + "'" + "WHERE gameId =   " + gameID;
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement
                     (sql)) {

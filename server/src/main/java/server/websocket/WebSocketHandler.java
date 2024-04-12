@@ -106,7 +106,17 @@ public class WebSocketHandler {
             if (isValidMove(move, gameID, playerColor, game)) {
                 game.makeMove(move);
                 gameService.updateBoard(new Gson().toJson(game), gameID);
-                String message = username + " moves " + move.getStartPosition().getRow() + "," + move.getStartPosition().getColumn() + " to " + move.getEndPosition().getRow() + "," + move.getEndPosition().getColumn();
+                String ischeck = "";
+                if (game.isInCheck(game.getTeamTurn())){
+                    ischeck = "CHECK";                    
+                }
+                if (game.isInCheckmate(game.getTeamTurn())){
+                    ischeck = "CHECKMATE";
+                }
+                if(game.isInStalemate(game.getTeamTurn())){
+                    ischeck = "STALEMATE";
+                }
+                String message = username + " moves " + move.getStartPosition().getRow() + "," + move.getStartPosition().getColumn() + " to " + move.getEndPosition().getRow() + "," + move.getEndPosition().getColumn() + " " + ischeck;
                 String gameString =  gameService.getBoard(Integer.parseInt(gameID));
                 var loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameString, message, playerColor);
                 connections.sendAll(loadGame, gameID);
@@ -135,7 +145,10 @@ public class WebSocketHandler {
             var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, command.getGameID(), message);
             connections.broadcast(username, notification, command.getGameID());
             connections.remove(username, command.getGameID());
-            gameService.removeUser(command.getGameID(), command.getPlayerColor());
+            if (!isObserver(command.getGameID(), username)) {
+                gameService.removeUser(command.getGameID(), command.getPlayerColor());
+            }
+
         } catch (Exception e) {
             var message = "Failed to leave. Please try again";
             sendError(session, message, command.getGameID());

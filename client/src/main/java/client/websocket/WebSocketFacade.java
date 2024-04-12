@@ -33,6 +33,7 @@ public class WebSocketFacade extends Endpoint {
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this, socketURI);
+            container.setDefaultMaxSessionIdleTimeout(5 * 60 * 1000);
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String s) {
@@ -120,12 +121,7 @@ public class WebSocketFacade extends Endpoint {
         int count = 1;
 
         for (char ch = 'a'; ch <= 'h'; ch++) {
-            if (Objects.equals(playerColor, "BLACK"))
-            {
-                letterNumberMap.put(ch, 9 - count);
-            } else {
                 letterNumberMap.put(ch, count);
-            }
             count++;
         }
         return new Integer[]{Integer.parseInt(piecePosition.substring(1)), letterNumberMap.get(piecePosition.charAt(0))};
